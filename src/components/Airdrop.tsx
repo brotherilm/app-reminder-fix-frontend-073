@@ -913,7 +913,7 @@ const Airdrop: React.FC = () => {
                               rel="noopener noreferrer"
                             >
                               <Image
-                                src="/assets/x-logo.png"
+                                src="https://ik.imagekit.io/fs0yie8l6/1690643591twitter-x-logo-png.webp%20(1).png?updatedAt=1738293353975"
                                 width={32}
                                 height={32}
                                 className="w-8 sm:w-9 hover:border-blue-500 border-2 border-transparent rounded-lg transition-colors"
@@ -954,17 +954,6 @@ const Airdrop: React.FC = () => {
       </div>
     );
   };
-
-   if (loading)
-    return (
-      <div className="flex justify-center items-center h-screen">
-        <div className="flex flex-col items-center space-y-4">
-          <div className="text-2xl font-semibold text-gray-800">Loading...</div>
-          <div className="w-16 h-16 border-4 border-t-4 border-blue-600 border-solid rounded-full animate-spin"></div>
-          <div className="text-sm text-gray-500">Please wait a moment</div>
-        </div>
-      </div>
-    );
 
   if (error) return <div>{error}</div>;
 
