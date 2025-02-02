@@ -42,7 +42,7 @@ export const TruncatedName: React.FC<{ name: string; maxLength?: number }> = ({
       <span
         className={`cursor-pointer ${
           name.length > maxLength
-            ? "text-white text-[20px] hover:underline underline"
+            ? "text-yellow-300 text-[20px] hover:underline underline"
             : "text-yellow-300 text-[20px] hover:underline underline"
         }`}
         onClick={() => name.length > maxLength && setShowFullName(true)}
