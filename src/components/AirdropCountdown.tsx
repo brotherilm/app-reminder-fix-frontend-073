@@ -70,7 +70,7 @@ const AirdropCountdown: React.FC<AirdropCountdownProps> = ({
   }, [countdown, onExpire]);
 
   if (timeLeft.isExpired) {
-    return <div className="text-red-600 text-[15px] mb-4">EXPIRED</div>;
+    return <div className="text-red-600 text-[20px] mb-4">EXPIRED</div>;
   }
 
   return (
