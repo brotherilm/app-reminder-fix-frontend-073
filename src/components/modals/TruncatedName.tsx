@@ -22,7 +22,7 @@ const FullNameCard: React.FC<FullNameCardProps> = ({ fullName, onClose }) => {
         >
           <X size={24} />
         </button>
-        <h2 className="text-xl font-bold">{fullName}</h2>
+        <h2 className="text-xl font-bold break-words">{fullName}</h2>
       </div>
     </div>
   );
@@ -30,7 +30,7 @@ const FullNameCard: React.FC<FullNameCardProps> = ({ fullName, onClose }) => {
 
 export const TruncatedName: React.FC<{ name: string; maxLength?: number }> = ({
   name,
-  maxLength = 20,
+  maxLength = 10,
 }) => {
   const [showFullName, setShowFullName] = useState(false);
 
@@ -38,12 +38,12 @@ export const TruncatedName: React.FC<{ name: string; maxLength?: number }> = ({
     name.length > maxLength ? `${name.slice(0, maxLength)}...` : name;
 
   return (
-    <>
+    <div className="inline-block max-w-full">
       <span
-        className={`cursor-pointer ${
+        className={`inline-block truncate max-w-full ${
           name.length > maxLength
-            ? "text-yellow-300 text-[20px] hover:underline underline"
-            : "text-yellow-300 text-[20px] hover:underline underline"
+            ? "text-yellow-300 text-[20px] hover:underline"
+            : "text-yellow-300 text-[20px] hover:underline"
         }`}
         onClick={() => name.length > maxLength && setShowFullName(true)}
       >
@@ -53,7 +53,7 @@ export const TruncatedName: React.FC<{ name: string; maxLength?: number }> = ({
       {showFullName && (
         <FullNameCard fullName={name} onClose={() => setShowFullName(false)} />
       )}
-    </>
+    </div>
   );
 };
 
