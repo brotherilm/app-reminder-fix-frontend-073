@@ -327,7 +327,7 @@ const Airdrop: React.FC = () => {
         };
 
         const response = await axios.post(
-        `${process.env.NEXT_PUBLIC_API_URL}api/create-accordition`,
+          `${process.env.NEXT_PUBLIC_API_URL}api/create-accordition`,
           newAccordition,
           {
             headers: {
@@ -649,22 +649,22 @@ const Airdrop: React.FC = () => {
       <div key={rating}>
         <div
           onClick={() => toggleAccordion(rating)}
-          className="mt-4 cursor-pointer bg-gray-900 text-base sm:text-lg font-semibold text-yellow-400 border-2 border-yellow-400/50 p-3 sm:p-4 mx-2 sm:mx-4 flex items-center justify-between rounded-t-xl shadow-lg backdrop-blur-sm hover:bg-gray-800 transition-colors"
+          className="mt-4 cursor-pointer bg-gray-900 text-base sm:text-lg font-semibold text-yellow-400 border-2 border-yellow-400/50 p-3 sm:p-4 mx-2 sm:mx-4 flex flex-col sm:flex-row items-stretch sm:items-center justify-between rounded-t-xl shadow-lg backdrop-blur-sm hover:bg-gray-800 transition-colors gap-2"
         >
-          <span className="ml-1 sm:ml-2 flex items-center gap-2">
+          <span className="ml-1 sm:ml-2 flex items-center gap-2 w-full">
             {isEditing ? (
               <input
                 type="text"
-                placeholder={accorditionLabel} // Add placeholder to show previous value
+                placeholder={accorditionLabel}
                 value={newLabel}
                 onChange={(e) => setNewLabel(e.target.value)}
-                className="bg-gray-800 text-yellow-400 p-1 rounded"
+                className="bg-gray-800 text-yellow-400 p-1 rounded w-full"
               />
             ) : (
-              <span>{accorditionLabel}</span>
+              <span className="truncate">{accorditionLabel}</span>
             )}
           </span>
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap sm:flex-nowrap items-center justify-end gap-2 w-full sm:w-auto">
             {isEditing ? (
               <>
                 <button
@@ -672,7 +672,7 @@ const Airdrop: React.FC = () => {
                     e.stopPropagation();
                     editAccordition(currentAccordition._id, newLabel);
                   }}
-                  className="bg-green-500 text-white px-2 py-1 rounded"
+                  className="bg-green-500 text-white px-2 py-1 rounded text-xs sm:text-sm"
                 >
                   Save
                 </button>
@@ -681,7 +681,7 @@ const Airdrop: React.FC = () => {
                     e.stopPropagation();
                     handleCancelEditAccordition();
                   }}
-                  className="bg-red-500 text-white px-2 py-1 rounded"
+                  className="bg-red-500 text-white px-2 py-1 rounded text-xs sm:text-sm"
                 >
                   Cancel
                 </button>
@@ -691,22 +691,23 @@ const Airdrop: React.FC = () => {
                 onClick={(e) => {
                   e.stopPropagation();
                   setEditingAccorditionId(currentAccordition._id);
-                  setNewLabel(""); // Start with empty input when editing
+                  setNewLabel("");
                 }}
-                className="bg-blue-500 text-white px-2 py-1 rounded"
+                className="bg-blue-500 text-white px-2 py-1 rounded text-xs sm:text-sm"
               >
                 Edit
               </button>
             )}
             <button
-              onClick={(e) =>
+              onClick={(e) => {
+                e.stopPropagation();
                 handleAccorditionDeleteClick(
                   currentAccordition._id,
                   accorditionLabel,
                   e
-                )
-              }
-              className="bg-red-500 text-white px-2 py-1 rounded"
+                );
+              }}
+              className="bg-red-500 text-white px-1.5 py-0.5 rounded text-xs sm:text-sm"
             >
               Delete
             </button>
@@ -725,7 +726,6 @@ const Airdrop: React.FC = () => {
             </span>
           </div>
         </div>
-
         {isExpanded && (
           <div className="p-2 sm:p-4 md:p-6 border-2 border-yellow-400/50 border-t-0 mx-2 sm:mx-4 mb-4 text-white rounded-b-xl bg-gray-900/50 backdrop-blur-sm">
             <div className="flex flex-wrap gap-4 justify-center">
@@ -735,7 +735,7 @@ const Airdrop: React.FC = () => {
                   (!supportDesktopOnly || item.support === 1) && (
                     <div
                       key={index}
-                      className="w-[170px] sm:w-[450px] lg:w-[300px] h-full border-2 border-yellow-400/50 rounded-xl p-3 sm:p-4 shadow-lg bg-gray-800/50 backdrop-blur-sm"
+                      className="w-full sm:w-[270px] lg:w-[270px] h-full border-2 border-yellow-400/50 rounded-xl p-3 sm:p-4 shadow-lg bg-gray-800/50 backdrop-blur-sm"
                     >
                       {/* Card Header */}
 
@@ -978,7 +978,7 @@ const Airdrop: React.FC = () => {
       {error && <p>{error}</p>}
 
       {remainingTime !== null && isCountdownActive ? (
-        <p className="text-xl text-yellow-300 font-semibold ml-4">
+        <p className="text-base md:text-xl text-yellow-300 font-semibold ml-4 md:ml-4">
           Reset Attempt (07:00 WIB) : {formatTime(remainingTime)}
         </p>
       ) : showResetButton ? (
@@ -1009,7 +1009,6 @@ const Airdrop: React.FC = () => {
           </a>
         </div>
       </div>
-
 
       <div className="font-manrope">
         {/* Render accordions */}
