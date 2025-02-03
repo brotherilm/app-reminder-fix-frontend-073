@@ -408,34 +408,32 @@ const Note: React.FC<NoteCardProps> = ({ isOpen, onClose, airdropId }) => {
                         </div>
                       </div>
                     ) : (
-                      <div className="flex items-center gap-3">
-                        <div className="flex-1 min-w-0">
-                          <div className="flex items-center justify-between">
-                            <a
-                              href={link.url}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="font-medium text-yellow-300 text-lg hover:text-yellow-400 transition-colors cursor-pointer"
-                            >
-                              {link.label}
-                            </a>
-                            <div className="flex gap-2 shrink-0">
-                              <button
-                                type="button"
-                                onClick={() => handleEditLink(index)}
-                                className="p-2 text-blue-400 hover:bg-blue-400/10 rounded-lg transition-colors"
-                              >
-                                <Edit2 className="w-5 h-5" />
-                              </button>
-                              <button
-                                type="button"
-                                onClick={() => handleDeleteLink(index)}
-                                className="p-2 text-red-400 hover:bg-red-400/10 rounded-lg transition-colors"
-                              >
-                                <Trash2 className="w-5 h-5" />
-                              </button>
-                            </div>
+                      <div className="flex items-center justify-between">
+                        <a
+                          href={link.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="font-medium text-yellow-300 truncate hover:text-yellow-400  w-[75%]"
+                        >
+                          <div className="flex items-center gap-3">
+                            <div className="flex-1 min-w-0">{link.label}</div>
                           </div>
+                        </a>
+                        <div className="flex gap-2 shrink-0 border border-yellow-300 w-[25%] justify-around">
+                          <button
+                            type="button"
+                            onClick={() => handleEditLink(index)}
+                            className="p-2 text-blue-400 hover:bg-blue-400/10 rounded-lg transition-colors"
+                          >
+                            <Edit2 className="w-5 h-5" />
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => handleDeleteLink(index)}
+                            className="p-2 text-red-400 hover:bg-red-400/10 rounded-lg transition-colors"
+                          >
+                            <Trash2 className="w-5 h-5" />
+                          </button>
                         </div>
                       </div>
                     )}
