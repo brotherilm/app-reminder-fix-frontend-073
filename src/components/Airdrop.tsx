@@ -351,7 +351,6 @@ const Airdrop: React.FC = () => {
         // Reset input field dan pesan error
         setNewAccorditionLabel("");
         setError("");
-        window.location.reload();
       } catch (error) {
         console.error(error);
         setError("Failed to create accordition. Please try again.");
