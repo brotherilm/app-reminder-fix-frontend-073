@@ -30,7 +30,7 @@ const FullNameCard: React.FC<FullNameCardProps> = ({ fullName, onClose }) => {
 
 export const TruncatedName: React.FC<{ name: string; maxLength?: number }> = ({
   name,
-  maxLength = 7,
+  maxLength = 20,
 }) => {
   const [showFullName, setShowFullName] = useState(false);
 
