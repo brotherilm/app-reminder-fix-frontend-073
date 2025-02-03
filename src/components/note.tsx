@@ -356,6 +356,7 @@ const Note: React.FC<NoteCardProps> = ({ isOpen, onClose, airdropId }) => {
               </div>
 
               {/* Links List */}
+              {/* Links List */}
               <div className="space-y-3">
                 {links.map((link, index) => (
                   <div key={index} className="bg-gray-800/50 rounded-xl p-3">
@@ -387,7 +388,7 @@ const Note: React.FC<NoteCardProps> = ({ isOpen, onClose, airdropId }) => {
                           <button
                             type="button"
                             onClick={(e) => {
-                              e.preventDefault(); // Prevent form submission
+                              e.preventDefault();
                               handleUpdateLink();
                             }}
                             className="p-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors"
@@ -397,7 +398,7 @@ const Note: React.FC<NoteCardProps> = ({ isOpen, onClose, airdropId }) => {
                           <button
                             type="button"
                             onClick={(e) => {
-                              e.preventDefault(); // Prevent form submission
+                              e.preventDefault();
                               setEditingLink(null);
                             }}
                             className="p-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors"
@@ -409,35 +410,32 @@ const Note: React.FC<NoteCardProps> = ({ isOpen, onClose, airdropId }) => {
                     ) : (
                       <div className="flex items-center gap-3">
                         <div className="flex-1 min-w-0">
-                          <div className="flex items-center gap-3">
-                            <span className="font-medium text-yellow-300 truncate">
-                              {link.label}
-                            </span>
+                          <div className="flex items-center justify-between">
                             <a
                               href={link.url}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="text-yellow-300/70 truncate hover:text-yellow-300 text-sm"
+                              className="font-medium text-yellow-300 text-lg hover:text-yellow-400 transition-colors cursor-pointer"
                             >
-                              {link.url}
+                              {link.label}
                             </a>
+                            <div className="flex gap-2 shrink-0">
+                              <button
+                                type="button"
+                                onClick={() => handleEditLink(index)}
+                                className="p-2 text-blue-400 hover:bg-blue-400/10 rounded-lg transition-colors"
+                              >
+                                <Edit2 className="w-5 h-5" />
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => handleDeleteLink(index)}
+                                className="p-2 text-red-400 hover:bg-red-400/10 rounded-lg transition-colors"
+                              >
+                                <Trash2 className="w-5 h-5" />
+                              </button>
+                            </div>
                           </div>
-                        </div>
-                        <div className="flex gap-2 shrink-0">
-                          <button
-                            type="button"
-                            onClick={() => handleEditLink(index)}
-                            className="p-2 text-blue-400 hover:bg-blue-400/10 rounded-lg transition-colors"
-                          >
-                            <Edit2 className="w-5 h-5" />
-                          </button>
-                          <button
-                            type="button"
-                            onClick={() => handleDeleteLink(index)}
-                            className="p-2 text-red-400 hover:bg-red-400/10 rounded-lg transition-colors"
-                          >
-                            <Trash2 className="w-5 h-5" />
-                          </button>
                         </div>
                       </div>
                     )}
