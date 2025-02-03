@@ -987,8 +987,7 @@ const Airdrop: React.FC = () => {
         </p>
       ) : null}
       <span className="ml-4">Total Airdrop: {filteredAirdropData.length}</span>
-      <div className="flex items-center">
-        <div className="ml-4">Dropdown All rating 3 rating 2 rating 1</div>
+      <div className="flex items-center justify-between">
         <div className="flex items-center m-4">
           <label className="mr-4 flex items-center">
             <input
@@ -997,10 +996,20 @@ const Airdrop: React.FC = () => {
               onChange={toggleSupportFilter}
               className="mr-2 w-5 h-5"
             />
-            <span>Desktop Only</span>
+            <span>Checkbox</span>
           </label>
         </div>
+        <div>
+          <a
+            href="https://drive.google.com/drive/u/1/folders/1YZsQoORy-9S7FpON5RLNKryCj4GBfhHZ"
+            className="bg-yellow-300 text-black p-4 rounded-xl mr-4"
+            target="_blank"
+          >
+            Link Wallet
+          </a>
+        </div>
       </div>
+
 
       <div className="font-manrope">
         {/* Render accordions */}
