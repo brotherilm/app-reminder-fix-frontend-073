@@ -37,7 +37,6 @@ const Airdrop: React.FC = () => {
   const [isNoteOpen, setIsNoteOpen] = useState(false);
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [loading, setLoading] = useState(true);
-  // const [error, setError] = useState("");
   const [selectedAirdropId, setSelectedAirdropId] = useState<string | null>(
     null
   );
@@ -45,7 +44,6 @@ const Airdrop: React.FC = () => {
     {}
   );
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-
   const [supportDesktopOnly, setSupportDesktopOnly] = useState(() => {
     const savedFilter = localStorage.getItem("supportDesktopOnly");
     return savedFilter ? JSON.parse(savedFilter) : false;
@@ -55,16 +53,14 @@ const Airdrop: React.FC = () => {
   const [isDisabledLink, setIsDisabledLink] = useState(false);
   const [remainingTime, setRemainingTime] = useState<number | null>(null);
   const [isCountdownActive, setIsCountdownActive] = useState<boolean>(false);
-  const [showResetButton, setShowResetButton] = useState(false); // State untuk tombol reset
+  const [showResetButton, setShowResetButton] = useState(false);
   const [newAccorditionLabel, setNewAccorditionLabel] = useState<string>("");
   const [error, setError] = useState<string>("");
-
   const [activeIndices, setActiveIndices] = useState<number[]>([]);
   const [editingAccorditionId, setEditingAccorditionId] = useState<
     string | null
-  >(null); // State untuk menyimpan id accordition yang sedang diedit
-  const [newLabel, setNewLabel] = useState(""); // State untuk menyimpan label baru
-
+  >(null);
+  const [newLabel, setNewLabel] = useState("");
   const [accorditions, setAccorditions] = useState<Accordition[]>([]);
   const [accorditionDeleteModalOpen, setAccorditionDeleteModalOpen] =
     useState(false);
@@ -99,12 +95,9 @@ const Airdrop: React.FC = () => {
         const countdownData = response.data.countdown;
         setRemainingTime(countdownData.remainingTime);
         setIsCountdownActive(countdownData.isCountdownActive);
-
-        // Set show reset button based on countdown status
         setShowResetButton(!countdownData.isCountdownActive);
       } catch (error) {
         if (axios.isAxiosError(error) && error.response) {
-          // Handle 404 error
           if (error.response.status === 404) {
             console.error(
               "The API endpoint was not found. Please check the URL."
@@ -113,7 +106,6 @@ const Airdrop: React.FC = () => {
             console.error("Error fetching countdown:", error.message);
           }
         } else {
-          // Handle other errors
           console.error("An unexpected error occurred:", error);
         }
       }
@@ -126,7 +118,6 @@ const Airdrop: React.FC = () => {
         if (prev !== null && prev > 0) {
           return prev - 1000;
         } else {
-          // When timer expires, set countdown as inactive and show reset button
           setIsCountdownActive(false);
           setShowResetButton(true);
           return 0;
@@ -148,7 +139,6 @@ const Airdrop: React.FC = () => {
   const toggleSupportFilter = () => {
     const newFilterState = !supportDesktopOnly;
     setSupportDesktopOnly(newFilterState);
-
     localStorage.setItem("supportDesktopOnly", JSON.stringify(newFilterState));
   };
 
@@ -171,7 +161,6 @@ const Airdrop: React.FC = () => {
 
   const editAccordition = async (accorditionId: string, newLabel: string) => {
     try {
-      // Validasi input
       if (!newLabel.trim()) {
         alert("Accordition label cannot be empty");
         return;
@@ -203,7 +192,7 @@ const Airdrop: React.FC = () => {
         );
         setAccorditions(updatedAccorditions);
         setEditingAccorditionId(null);
-        setNewLabel(""); // Reset input after successful save
+        setNewLabel("");
       }
     } catch (error) {
       console.error("Failed to edit accordition:", error);
@@ -212,7 +201,7 @@ const Airdrop: React.FC = () => {
 
   const handleCancelEditAccordition = () => {
     setEditingAccorditionId(null);
-    setNewLabel(""); // Reset input when canceling
+    setNewLabel("");
   };
 
   const handleAccorditionDeleteClick = (
@@ -236,7 +225,6 @@ const Airdrop: React.FC = () => {
     setSelectedAccorditionToDelete(null);
   };
 
-  // Fungsi untuk menghapus accordition
   const deleteAccordition = async (accorditionId: string) => {
     try {
       const token = localStorage.getItem("token");
@@ -267,7 +255,6 @@ const Airdrop: React.FC = () => {
     }
   };
 
-  // Fetch existing accorditions on component mount
   useEffect(() => {
     const fetchAccorditions = async () => {
       try {
@@ -286,7 +273,6 @@ const Airdrop: React.FC = () => {
           }
         );
 
-        // Set state with fetched accorditions
         setAccorditions(response.data.accorditions || []);
       } catch (error) {
         if (axios.isAxiosError(error) && error.response) {
@@ -308,10 +294,9 @@ const Airdrop: React.FC = () => {
 
   const createAccordition = useCallback(
     async (e: React.FormEvent) => {
-      e.preventDefault(); // Mencegah form dari reload halaman
+      e.preventDefault();
 
       try {
-        // Validasi input
         if (!newAccorditionLabel.trim()) {
           setError("Please enter a custom name for the accordition.");
           return;
@@ -339,16 +324,14 @@ const Airdrop: React.FC = () => {
 
         console.log("Success:", response.data);
 
-        // Update state dengan accordition baru
         setAccorditions((prev) => [
           ...prev,
           {
-            _id: response.data._id, // Gunakan _id, bukan id
+            _id: response.data._id,
             accorditionLabel: newAccorditionLabel,
           },
         ]);
 
-        // Reset input field dan pesan error
         setNewAccorditionLabel("");
         setError("");
         window.location.reload();
@@ -360,7 +343,6 @@ const Airdrop: React.FC = () => {
     [newAccorditionLabel]
   );
 
-  // On page load, check if there is a saved active accordion
   useEffect(() => {
     const savedIndices = localStorage.getItem("activeAccordionIndices");
     if (savedIndices) {
@@ -371,8 +353,6 @@ const Airdrop: React.FC = () => {
   const handleOpenNote = (airdropId: string) => {
     setSelectedAirdropId(airdropId);
     setIsNoteOpen(true);
-
-    // Nonaktifkan tombol selama 4 detik
     setIsDisabled(true);
     setTimeout(() => {
       setIsDisabled(false);
@@ -387,8 +367,6 @@ const Airdrop: React.FC = () => {
   const handleOpenEdit = (airdropId: string) => {
     setSelectedAirdropId(airdropId);
     setIsEditOpen(true);
-
-    // Nonaktifkan tombol selama 4 detik
     setIsDisabled(true);
     setTimeout(() => {
       setIsDisabled(false);
@@ -398,7 +376,7 @@ const Airdrop: React.FC = () => {
   const handleCloseEdit = () => {
     setIsEditOpen(false);
     setSelectedAirdropId(null);
-    fetchAirdropData(); // Optional: fetch data when modal closes
+    fetchAirdropData();
   };
 
   const openDeleteConfirmation = (airdropId: string) => {
@@ -406,7 +384,6 @@ const Airdrop: React.FC = () => {
     setIsDeleteModalOpen(true);
   };
 
-  // Fungsi untuk menutup konfirmasi modal delete
   const closeDeleteConfirmation = () => {
     setSelectedAirdropId(null);
     setIsDeleteModalOpen(false);
@@ -439,8 +416,6 @@ const Airdrop: React.FC = () => {
       );
 
       await fetchAirdropData();
-
-      // Close modal after successful deletion
       closeDeleteConfirmation();
     } catch (error) {
       console.error(error);
@@ -449,7 +424,7 @@ const Airdrop: React.FC = () => {
 
   const fetchAirdropData = useCallback(async () => {
     try {
-      setLoading(true); // Set loading true setiap kali dipanggil
+      setLoading(true);
       const token = localStorage.getItem("token");
       const userDataString = localStorage.getItem("user");
 
@@ -468,7 +443,6 @@ const Airdrop: React.FC = () => {
         }
       );
 
-      // Process airdrop data without fallback
       const processedAirdrops: AirdropItem[] = response.data.map(
         (item: AirdropItem) => {
           const countdownTimestamp = Number(item.countdown);
@@ -482,10 +456,10 @@ const Airdrop: React.FC = () => {
 
       localStorage.setItem("airdropData", JSON.stringify(processedAirdrops));
       setAirdropData(processedAirdrops);
-      setFilteredAirdropData(processedAirdrops); // Initialize filtered data
+      setFilteredAirdropData(processedAirdrops);
     } catch (error) {
       setError(
-        "Failed to retrieve airdrop data.Please wait 1 minute and logging in again."
+        "Failed to retrieve airdrop data. Please wait 1 minute and logging in again."
       );
       console.error(error);
     } finally {
@@ -499,15 +473,23 @@ const Airdrop: React.FC = () => {
 
   const sortedAirdropData = useMemo(() => {
     return filteredAirdropData.sort((a, b) => {
-      // First, check if any item is expired
+      // Cek apakah airdropId telah diklik
+      const aIsClicked =
+        localStorage.getItem(`clicked_${a.airdropId}`) === "true";
+      const bIsClicked =
+        localStorage.getItem(`clicked_${b.airdropId}`) === "true";
+
+      // Prioritaskan item yang telah diklik
+      if (aIsClicked && !bIsClicked) return -1; // a di atas b
+      if (!aIsClicked && bIsClicked) return 1; // b di atas a
+
+      // Jika keduanya diklik atau tidak diklik, urutkan berdasarkan status expired
       const aIsExpired = expiredItems[a._id] || Date.now() > a.countdown;
       const bIsExpired = expiredItems[b._id] || Date.now() > b.countdown;
 
-      // If one item is expired and the other is not, put the expired item first
       if (aIsExpired && !bIsExpired) return -1;
       if (!aIsExpired && bIsExpired) return 1;
 
-      // If both are in the same expiration state, maintain original sorting
       return 0;
     });
   }, [filteredAirdropData, expiredItems]);
@@ -530,7 +512,6 @@ const Airdrop: React.FC = () => {
         throw new Error("Airdrop ID is not defined");
       }
 
-      // Perform attempt
       await axios.post(
         `${process.env.NEXT_PUBLIC_API_URL}api/attempt`,
         {
@@ -544,7 +525,6 @@ const Airdrop: React.FC = () => {
         }
       );
 
-      // Reset timer
       await axios.post(
         `${process.env.NEXT_PUBLIC_API_URL}api/reset-timer`,
         {
@@ -577,17 +557,30 @@ const Airdrop: React.FC = () => {
   };
 
   const handleClickLinkPlay = async (airdropId: string, timer: string) => {
-    // Disable button for 4 seconds
     setIsDisabledLink(true);
     setTimeout(() => setIsDisabledLink(false), 4000);
 
     await handleAttemptandResetTimer(airdropId, timer);
+
+    // Ambil airdropId terakhir yang diklik dari localStorage
+    const lastClickedId = localStorage.getItem("last_clicked_airdropId");
+
+    // Jika ada airdropId sebelumnya, hapus statusnya
+    if (lastClickedId) {
+      localStorage.removeItem(`clicked_${lastClickedId}`);
+    }
+
+    // Simpan airdropId baru sebagai yang terakhir diklik
+    localStorage.setItem("last_clicked_airdropId", airdropId);
+
+    // Simpan status klik untuk airdropId baru
+    localStorage.setItem(`clicked_${airdropId}`, "true");
   };
 
   const toggleSupport = async (airdropId: string, support: number) => {
-    if (isSupportLoading) return; // If still loading, ignore the click
-    setSupportLoading(true); // Set loading state to true
-    setSupportDisabled(true); // Disable the checkbox
+    if (isSupportLoading) return;
+    setSupportLoading(true);
+    setSupportDisabled(true);
 
     try {
       const token = localStorage.getItem("token");
@@ -618,15 +611,13 @@ const Airdrop: React.FC = () => {
       setError("Failed to update support status");
       console.error(error);
     } finally {
-      // Add a delay of 4 seconds before enabling the checkbox again
       setTimeout(() => {
         setSupportLoading(false);
-        setSupportDisabled(false); // Re-enable the checkbox after 4 seconds
-      }, 4000); // 4 seconds delay
+        setSupportDisabled(false);
+      }, 2000);
     }
   };
 
-  // handleAirdropCreated
   const handleAirdropCreated = async (newAirdrop: any) => {
     setAirdropData((prevData) => [...prevData, newAirdrop]);
     await fetchAirdropData();
@@ -718,9 +709,9 @@ const Airdrop: React.FC = () => {
             >
               <Image
                 src="/assets/triangle.png"
-                width={16}
-                height={16}
-                className="w-4"
+                width={20}
+                height={20}
+                className="w-5 md:w-8"
                 alt="toggle"
               />
             </span>
@@ -737,6 +728,10 @@ const Airdrop: React.FC = () => {
                       key={index}
                       className="w-full sm:w-[270px] lg:w-[270px] h-full border-2 border-yellow-400/50 rounded-xl p-3 sm:p-4 shadow-lg bg-gray-800/50 backdrop-blur-sm"
                     >
+                      {localStorage.getItem("last_clicked_airdropId") ===
+                        item.airdropId && (
+                        <div className="absolute top-0 right-0 w-5 h-5 bg-red-500 rounded-full"></div>
+                      )}
                       {/* Card Header */}
 
                       <div className="flex justify-between">
