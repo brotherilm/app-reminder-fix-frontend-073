@@ -350,6 +350,14 @@ const Airdrop: React.FC = () => {
     }
   }, []);
 
+  const convertMinutesToTime = (minutes: number) => {
+    const h = Math.floor(minutes / 60);
+    const m = minutes % 60;
+    const s = 0; // Karena data awal hanya menit, maka detik dianggap 0
+
+    return `${h}h ${m}m ${s}s`;
+  };
+
   const handleOpenNote = (airdropId: string) => {
     setSelectedAirdropId(airdropId);
     setIsNoteOpen(true);
@@ -726,14 +734,14 @@ const Airdrop: React.FC = () => {
                   (!supportDesktopOnly || item.support === 1) && (
                     <div
                       key={index}
-                      className="w-full sm:w-[270px] lg:w-[270px] h-full border-2 border-yellow-400/50 rounded-xl p-3 sm:p-4 shadow-lg bg-gray-800/50 backdrop-blur-sm"
+                      className={`w-full sm:w-[270px] lg:w-[270px] min-h-[200px] border-2 rounded-xl p-3 sm:p-4 shadow-lg bg-gray-800/50 backdrop-blur-sm ${
+                        localStorage.getItem("last_clicked_airdropId") ===
+                        item.airdropId
+                          ? "border-green-500"
+                          : "border-yellow-400/50"
+                      }`}
                     >
-                      {localStorage.getItem("last_clicked_airdropId") ===
-                        item.airdropId && (
-                        <div className="absolute top-0 right-0 w-5 h-5 bg-yellow-300 rounded-full"></div>
-                      )}
                       {/* Card Header */}
-
                       <div className="flex justify-between">
                         <div className="flex-1">
                           <div className="flex items-center text-gray-300">
@@ -748,7 +756,7 @@ const Airdrop: React.FC = () => {
                           <div className="flex items-center text-gray-300">
                             <span className="text-sm mr-1">Timer: </span>
                             <span className="font-medium text-yellow-400">
-                              {item.timer}
+                              {convertMinutesToTime(item.timer)}
                             </span>
                           </div>
                           <div className="flex items-center">
