@@ -825,88 +825,47 @@ const Airdrop: React.FC = () => {
                         <span className="text-gray-300 text-sm">
                           Airdrop Play:
                         </span>
-                        <div className="flex gap-2 mt-2">
-                          <a
-                            href={
-                              item.LinkTelegramPlay || "https://telegram.org"
-                            }
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            onClick={() =>
-                              handleClickLinkPlay(item.airdropId, item.timer)
-                            }
-                            style={{
-                              pointerEvents: isDisabledLink ? "none" : "auto",
-                              opacity: isDisabledLink ? 0.6 : 1,
-                            }}
-                          >
-                            <Image
-                              src="/assets/telegram.png"
-                              width={32}
-                              height={32}
-                              className="w-8 sm:w-9 hover:border-blue-500 border-2 border-transparent rounded-lg transition-colors"
-                              alt="telegram"
-                            />
-                          </a>
-                          <a
-                            href={item.LinkWebPlay || "https://google.com"}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            onClick={() =>
-                              handleClickLinkPlay(item.airdropId, item.timer)
-                            }
-                            style={{
-                              pointerEvents: isDisabledLink ? "none" : "auto",
-                              opacity: isDisabledLink ? 0.6 : 1,
-                            }}
-                          >
-                            <Image
-                              src="/assets/web-logo.png"
-                              width={32}
-                              height={32}
-                              className="w-8 sm:w-9 hover:border-blue-500 border-2 border-transparent rounded-lg transition-colors"
-                              alt="web"
-                            />
-                          </a>
-                        </div>
-                      </div>
-
-                      {/* Channel Announcement Section */}
-                      <div className="mt-4">
-                        <span className="text-gray-300 text-sm">
-                          Channel Announcement:
-                        </span>
-                        <div className="flex justify-between items-center mt-2">
-                          <div className="flex gap-2">
+                        <div className="flex gap-2 mt-2 justify-between">
+                          <div className="flex">
                             <a
                               href={
-                                item.LinkTelegramChannel ||
-                                "https://telegram.org"
+                                item.LinkTelegramPlay || "https://telegram.org"
                               }
                               target="_blank"
                               rel="noopener noreferrer"
+                              onClick={() =>
+                                handleClickLinkPlay(item.airdropId, item.timer)
+                              }
+                              style={{
+                                pointerEvents: isDisabledLink ? "none" : "auto",
+                                opacity: isDisabledLink ? 0.6 : 1,
+                              }}
                             >
                               <Image
                                 src="/assets/telegram.png"
                                 width={32}
                                 height={32}
-                                className="w-8 sm:w-9 hover:border-blue-500 border-2 border-transparent rounded-lg transition-colors"
+                                className="mr-1 w-8 sm:w-9 hover:border-blue-500 border-2 border-transparent rounded-lg transition-colors"
                                 alt="telegram"
                               />
                             </a>
                             <a
-                              href={
-                                item.LinkWebAnnountcement ||
-                                "https://google.com"
-                              }
+                              href={item.LinkWebPlay || "https://google.com"}
                               target="_blank"
                               rel="noopener noreferrer"
+                              onClick={() =>
+                                handleClickLinkPlay(item.airdropId, item.timer)
+                              }
+                              style={{
+                                pointerEvents: isDisabledLink ? "none" : "auto",
+                                opacity: isDisabledLink ? 0.6 : 1,
+                              }}
                             >
                               <Image
                                 src="/assets/web-logo.png"
                                 width={32}
                                 height={32}
-                                className="w-8 sm:w-9 hover:border-blue-500 border-2 border-transparent rounded-lg transition-colors"
+                                className="mr-1 w-8 sm:w-9 hover:border-blue-500 border-2 border-transparent rounded-lg transition-colors"
                                 alt="web"
                               />
                             </a>
@@ -924,7 +883,6 @@ const Airdrop: React.FC = () => {
                               />
                             </a>
                           </div>
-
                           <input
                             onClick={() =>
                               toggleSupport(
@@ -948,6 +906,8 @@ const Airdrop: React.FC = () => {
                           />
                         </div>
                       </div>
+
+                      {/* Channel Announcement Section */}
                     </div>
                   )
               )}
