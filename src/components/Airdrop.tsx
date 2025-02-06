@@ -566,7 +566,7 @@ const Airdrop: React.FC = () => {
 
   const handleClickLinkPlay = async (airdropId: string, timer: string) => {
     setIsDisabledLink(true);
-    setTimeout(() => setIsDisabledLink(false), 4000);
+    setTimeout(() => setIsDisabledLink(false), 1000);
 
     await handleAttemptandResetTimer(airdropId, timer);
 
@@ -622,7 +622,7 @@ const Airdrop: React.FC = () => {
       setTimeout(() => {
         setSupportLoading(false);
         setSupportDisabled(false);
-      }, 2000);
+      }, 1000);
     }
   };
 
