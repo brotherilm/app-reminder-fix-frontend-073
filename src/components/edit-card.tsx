@@ -300,34 +300,6 @@ const EditCard: React.FC<EditCardProps> = ({
                 </div>
               </div>
 
-              <div className="grid md:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-yellow-400 mb-1">
-                    Telegram Channel
-                  </label>
-                  <input
-                    type="text"
-                    name="LinkTelegramChannel"
-                    value={formData.LinkTelegramChannel}
-                    onChange={handleInputChange}
-                    className="w-full px-4 py-2 bg-zinc-800 border-2 border-yellow-400/30 rounded-lg focus:border-yellow-400 focus:outline-none text-white"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-yellow-400 mb-1">
-                    Web Announcement
-                  </label>
-                  <input
-                    type="text"
-                    name="LinkWebAnnountcement"
-                    value={formData.LinkWebAnnountcement}
-                    onChange={handleInputChange}
-                    className="w-full px-4 py-2 bg-zinc-800 border-2 border-yellow-400/30 rounded-lg focus:border-yellow-400 focus:outline-none text-white"
-                  />
-                </div>
-              </div>
-
               <div>
                 <label className="block text-sm font-medium text-yellow-400 mb-1">
                   X Link
