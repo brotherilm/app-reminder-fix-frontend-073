@@ -7,6 +7,7 @@ import AirdropCountdown from "./AirdropCountdown";
 import DeleteConfirmationModal from "./modals/DeleteConfirmationModal";
 import SearchInput from "./SearchInput";
 import TruncatedName from "./modals/TruncatedName";
+import GlobalTime from "./modals/GlobalTime";
 import Image from "next/image";
 import AccorditionDeleteConfirmationModal from "./modals/AccorditionDeleteConfirmationModal";
 
@@ -50,6 +51,9 @@ const Airdrop: React.FC = () => {
   const [filteredAirdropData, setFilteredAirdropData] = useState<any[]>([]);
   const [isDisabled, setIsDisabled] = useState(false);
   const [isDisabledLink, setIsDisabledLink] = useState(false);
+  const [remainingTime, setRemainingTime] = useState<number | null>(null);
+  const [isCountdownActive, setIsCountdownActive] = useState<boolean>(false);
+  const [showResetButton, setShowResetButton] = useState(false);
   const [newAccorditionLabel, setNewAccorditionLabel] = useState<string>("");
   const [error, setError] = useState<string>("");
   const [activeIndices, setActiveIndices] = useState<number[]>([]);
@@ -64,6 +68,73 @@ const Airdrop: React.FC = () => {
     useState<SelectedAccordition | null>(null);
   const [isSupportLoading, setSupportLoading] = useState(false);
   const [isSupportDisabled, setSupportDisabled] = useState(false);
+
+  useEffect(() => {
+    const fetchCountdown = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        const userDataString = localStorage.getItem("user");
+
+        if (!token || !userDataString) {
+          throw new Error("Authentication failed");
+        }
+
+        const userData = JSON.parse(userDataString);
+        const response = await axios.post(
+          `${process.env.NEXT_PUBLIC_API_URL}api/get-globaltimer`,
+          {
+            _id: userData.userId,
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        const countdownData = response.data.countdown;
+        setRemainingTime(countdownData.remainingTime);
+        setIsCountdownActive(countdownData.isCountdownActive);
+        setShowResetButton(!countdownData.isCountdownActive);
+      } catch (error) {
+        if (axios.isAxiosError(error) && error.response) {
+          if (error.response.status === 404) {
+            console.error(
+              "The API endpoint was not found. Please check the URL."
+            );
+          } else {
+            console.error("Error fetching countdown:", error.message);
+          }
+        } else {
+          console.error("An unexpected error occurred:", error);
+        }
+      }
+    };
+
+    fetchCountdown();
+
+    const interval = setInterval(() => {
+      setRemainingTime((prev) => {
+        if (prev !== null && prev > 0) {
+          return prev - 1000;
+        } else {
+          setIsCountdownActive(false);
+          setShowResetButton(true);
+          return 0;
+        }
+      });
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, []);
+
+  const formatTime = (time: number) => {
+    const seconds = Math.floor((time / 1000) % 60);
+    const minutes = Math.floor((time / (1000 * 60)) % 60);
+    const hours = Math.floor((time / (1000 * 60 * 60)) % 24);
+
+    return `${hours}h ${minutes}m ${seconds}s`;
+  };
 
   const toggleSupportFilter = () => {
     const newFilterState = !supportDesktopOnly;
@@ -431,6 +502,61 @@ const Airdrop: React.FC = () => {
     });
   }, [filteredAirdropData, expiredItems]);
 
+  const handleAttemptandResetTimer = async (
+    airdropId: string,
+    timer: string
+  ) => {
+    try {
+      const token = localStorage.getItem("token");
+      const userDataString = localStorage.getItem("user");
+
+      if (!token || !userDataString) {
+        throw new Error("Authentication token or user data not found");
+      }
+
+      const userData = JSON.parse(userDataString);
+
+      if (!airdropId) {
+        throw new Error("Airdrop ID is not defined");
+      }
+
+      await axios.post(
+        `${process.env.NEXT_PUBLIC_API_URL}api/attempt`,
+        {
+          _id: userData.userId,
+          airdropId: airdropId,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      await axios.post(
+        `${process.env.NEXT_PUBLIC_API_URL}api/reset-timer`,
+        {
+          _id: userData.userId,
+          airdropId: airdropId,
+          countdownMinute: timer,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      await fetchAirdropData();
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        console.error("Error response:", error.response?.data);
+        console.error("Error status:", error.response?.status);
+      }
+      console.error("Failed to make attempt request:", error);
+    }
+  };
+
   const handleCountdownExpire = (id: string, isExpired: boolean) => {
     setExpiredItems((prev) => ({
       ...prev,
@@ -440,7 +566,9 @@ const Airdrop: React.FC = () => {
 
   const handleClickLinkPlay = async (airdropId: string, timer: string) => {
     setIsDisabledLink(true);
-    setTimeout(() => setIsDisabledLink(false), 4000);
+    setTimeout(() => setIsDisabledLink(false), 1000);
+
+    await handleAttemptandResetTimer(airdropId, timer);
 
     // Ambil airdropId terakhir yang diklik dari localStorage
     const lastClickedId = localStorage.getItem("last_clicked_airdropId");
@@ -494,7 +622,7 @@ const Airdrop: React.FC = () => {
       setTimeout(() => {
         setSupportLoading(false);
         setSupportDisabled(false);
-      }, 2000);
+      }, 1000);
     }
   };
 
@@ -616,6 +744,12 @@ const Airdrop: React.FC = () => {
                       {/* Card Header */}
                       <div className="flex justify-between">
                         <div className="flex-1">
+                          <div className="flex items-center text-gray-300">
+                            <span className="text-sm mr-1">Attempts:</span>
+                            <span className="font-medium text-yellow-400">
+                              {item.attempt || "0"}
+                            </span>
+                          </div>
                           <div className="items-center mt-4 text-yellow-400 font-medium">
                             <TruncatedName name={item.name} />
                           </div>
@@ -806,6 +940,15 @@ const Airdrop: React.FC = () => {
       {loading && <p>Loading...</p>}
       {error && <p>{error}</p>}
 
+      {remainingTime !== null && isCountdownActive ? (
+        <p className="text-base md:text-xl text-yellow-300 font-semibold ml-4 md:ml-4">
+          Reset Attempt (07:00 WIB) : {formatTime(remainingTime)}
+        </p>
+      ) : showResetButton ? (
+        <p className="text-xl text-red-500 font-semibold">
+          <GlobalTime />
+        </p>
+      ) : null}
       <span className="ml-4">Total Airdrop: {filteredAirdropData.length}</span>
       <div className="flex items-center justify-between">
         <div className="flex items-center m-4">
