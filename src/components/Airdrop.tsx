@@ -586,45 +586,43 @@ const Airdrop: React.FC = () => {
   };
 
   const toggleSupport = async (airdropId: string, support: number) => {
-    if (isSupportLoading) return;
-    setSupportLoading(true);
-    setSupportDisabled(true);
+  if (isSupportLoading) return;
+  setSupportLoading(true);
+  setSupportDisabled(true);
 
-    try {
-      const token = localStorage.getItem("token");
-      const userDataString = localStorage.getItem("user");
+  try {
+    const token = localStorage.getItem("token");
+    const userDataString = localStorage.getItem("user");
 
-      if (!token || !userDataString) {
-        throw new Error("Authentication token or user data not found");
-      }
-
-      const userData = JSON.parse(userDataString);
-
-      await axios.post(
-        `${process.env.NEXT_PUBLIC_API_URL}api/support-desktop`,
-        {
-          _id: userData.userId,
-          airdropId,
-          support,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-
-      await fetchAirdropData();
-    } catch (error) {
-      setError("Failed to update support status");
-      console.error(error);
-    } finally {
-      setTimeout(() => {
-        setSupportLoading(false);
-        setSupportDisabled(false);
-      }, 1000);
+    if (!token || !userDataString) {
+      throw new Error("Authentication token or user data not found");
     }
-  };
+
+    const userData = JSON.parse(userDataString);
+
+    await axios.post(
+      `${process.env.NEXT_PUBLIC_API_URL}api/support-desktop`,
+      {
+        _id: userData.userId,
+        airdropId,
+        support,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    await fetchAirdropData();
+  } catch (error) {
+    setError("Failed to update support status");
+    console.error(error);
+  } finally {
+    setSupportLoading(false);
+    setSupportDisabled(false);
+  }
+};
 
   const handleAirdropCreated = async (newAirdrop: any) => {
     setAirdropData((prevData) => [...prevData, newAirdrop]);
