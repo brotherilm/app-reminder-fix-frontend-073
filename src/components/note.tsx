@@ -10,10 +10,6 @@ interface AirdropData {
   rating?: number;
   totalSpend?: string;
   note?: string;
-  links?: Array<{
-    label: string;
-    url: string;
-  }>;
 }
 
 interface NoteCardProps {
@@ -28,15 +24,8 @@ const Note: React.FC<NoteCardProps> = ({ isOpen, onClose, airdropId }) => {
   const [formData, setFormData] = useState({
     totalSpend: "",
     note: "",
-    linkLabel: "",
-    linkUrl: "",
   });
-  const [links, setLinks] = useState<Array<{ label: string; url: string }>>([]);
-  const [editingLink, setEditingLink] = useState<{
-    index: number;
-    label: string;
-    url: string;
-  } | null>(null);
+  const [isEditing, setIsEditing] = useState(true);
 
   useEffect(() => {
     const fetchAirdropData = async () => {
@@ -70,10 +59,7 @@ const Note: React.FC<NoteCardProps> = ({ isOpen, onClose, airdropId }) => {
           setFormData({
             totalSpend: specificAirdrop.totalSpend || "",
             note: specificAirdrop.note || "",
-            linkLabel: "",
-            linkUrl: "",
           });
-          setLinks(specificAirdrop.links || []);
         } else {
           setError("Airdrop data not found");
         }
@@ -94,110 +80,6 @@ const Note: React.FC<NoteCardProps> = ({ isOpen, onClose, airdropId }) => {
       ...prev,
       [name]: value,
     }));
-  };
-
-  const handleAddLink = async () => {
-    if (!formData.linkLabel || !formData.linkUrl) return;
-
-    try {
-      const token = localStorage.getItem("token");
-      const userDataString = localStorage.getItem("user");
-      if (!token || !userDataString) throw new Error("Required data not found");
-
-      const userData = JSON.parse(userDataString);
-      await axios.post(
-        `${process.env.NEXT_PUBLIC_API_URL}api/add-link`,
-        {
-          _id: userData.userId,
-          airdropId: airdropId,
-          label: formData.linkLabel,
-          url: formData.linkUrl,
-        },
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
-
-      setLinks((prevLinks) => [
-        ...prevLinks,
-        { label: formData.linkLabel, url: formData.linkUrl },
-      ]);
-      setFormData((prev) => ({
-        ...prev,
-        linkLabel: "",
-        linkUrl: "",
-      }));
-    } catch (error) {
-      setError("Failed to add link");
-      console.error(error);
-    }
-  };
-
-  const handleEditLink = (index: number) => {
-    const link = links[index];
-    setEditingLink({ index, label: link.label, url: link.url });
-  };
-
-  const handleUpdateLink = async () => {
-    if (!editingLink) return;
-
-    try {
-      const token = localStorage.getItem("token");
-      const userDataString = localStorage.getItem("user");
-      if (!token || !userDataString) throw new Error("Required data not found");
-
-      const userData = JSON.parse(userDataString);
-      await axios.post(
-        `${process.env.NEXT_PUBLIC_API_URL}api/edit-link`,
-        {
-          _id: userData.userId,
-          airdropId: airdropId,
-          index: editingLink.index,
-          label: editingLink.label,
-          url: editingLink.url,
-        },
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
-
-      const newLinks = [...links];
-      newLinks[editingLink.index] = {
-        label: editingLink.label,
-        url: editingLink.url,
-      };
-      setLinks(newLinks);
-      setEditingLink(null);
-    } catch (error) {
-      setError("Failed to update link");
-      console.error(error);
-    }
-  };
-
-  const handleDeleteLink = async (index: number) => {
-    try {
-      const token = localStorage.getItem("token");
-      const userDataString = localStorage.getItem("user");
-      if (!token || !userDataString) throw new Error("Required data not found");
-
-      const userData = JSON.parse(userDataString);
-      await axios.post(
-        `${process.env.NEXT_PUBLIC_API_URL}api/delete-link`,
-        {
-          _id: userData.userId,
-          airdropId: airdropId,
-          index: index,
-        },
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
-
-      setLinks((prevLinks) => prevLinks.filter((_, i) => i !== index));
-    } catch (error) {
-      setError("Failed to delete link");
-      console.error(error);
-    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -222,11 +104,48 @@ const Note: React.FC<NoteCardProps> = ({ isOpen, onClose, airdropId }) => {
       );
 
       setError(""); // Clear any existing errors
-      onClose(); // Close the modal after successful submission
+      setIsEditing(false); // Switch to view mode after saving
     } catch (error) {
       setError("Failed to update note");
       console.error(error);
     }
+  };
+
+  // Function to convert URLs in text to clickable links
+  const renderTextWithLinks = (text: string) => {
+    if (!text) return null;
+
+    // Regex to match URLs
+    const urlRegex = /(https?:\/\/[^\s]+)/g;
+
+    // Split text by URLs and create an array of text and link elements
+    const parts = text.split(urlRegex);
+    const matches = text.match(urlRegex) || [];
+
+    return (
+      <div className="whitespace-pre-wrap">
+        {parts.map((part, index) => {
+          // Check if this part matches a URL
+          const isURL = matches.includes(part);
+
+          if (isURL) {
+            return (
+              <a
+                key={index}
+                href={part}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-blue-400 hover:underline"
+              >
+                {part}
+              </a>
+            );
+          }
+
+          return <span key={index}>{part}</span>;
+        })}
+      </div>
+    );
   };
 
   if (!isOpen || !airdropData) return null;
@@ -248,12 +167,20 @@ const Note: React.FC<NoteCardProps> = ({ isOpen, onClose, airdropId }) => {
             <h2 className="text-2xl font-bold text-yellow-300">
               More Information
             </h2>
-            <button
-              onClick={onClose}
-              className="px-4 py-2 border border-yellow-300 text-yellow-300 rounded-lg hover:bg-yellow-300 hover:text-black transition-colors"
-            >
-              Close
-            </button>
+            <div className="flex gap-2">
+              <button
+                onClick={() => setIsEditing(!isEditing)}
+                className="px-4 py-2 border border-yellow-300 text-yellow-300 rounded-lg hover:bg-yellow-300 hover:text-black transition-colors"
+              >
+                {isEditing ? "View" : "Edit"}
+              </button>
+              <button
+                onClick={onClose}
+                className="px-4 py-2 border border-yellow-300 text-yellow-300 rounded-lg hover:bg-yellow-300 hover:text-black transition-colors"
+              >
+                Close
+              </button>
+            </div>
           </div>
         </div>
 
@@ -271,176 +198,34 @@ const Note: React.FC<NoteCardProps> = ({ isOpen, onClose, airdropId }) => {
             <div className="space-y-4">
               <div>
                 <label className="block mb-2 text-yellow-300">
-                  Total Spend
-                </label>
-                <input
-                  type="text"
-                  name="totalSpend"
-                  value={formData.totalSpend}
-                  onChange={handleInputChange}
-                  className="w-full px-4 py-2 bg-gray-800 border-2 border-yellow-300/50 rounded-xl focus:border-yellow-300 focus:outline-none text-yellow-300"
-                />
-              </div>
-
-              <div>
-                <label className="block mb-2 text-yellow-300">
                   Additional Note
                 </label>
-                <textarea
-                  name="note"
-                  value={formData.note}
-                  onChange={handleInputChange}
-                  className="w-full px-4 py-2 bg-gray-800 border-2 border-yellow-300/50 rounded-xl focus:border-yellow-300 focus:outline-none text-yellow-300 h-32 resize-none"
-                />
+                {isEditing ? (
+                  <textarea
+                    name="note"
+                    value={formData.note}
+                    onChange={handleInputChange}
+                    className="w-full px-4 py-2 bg-gray-800 border-2 border-yellow-300/50 rounded-xl focus:border-yellow-300 focus:outline-none text-yellow-300 h-[500px] resize-none"
+                  />
+                ) : (
+                  <div className="w-full px-4 py-2 bg-gray-800 border-2 border-yellow-300/50 rounded-xl text-yellow-300 h-[500px] overflow-y-auto">
+                    {renderTextWithLinks(formData.note)}
+                  </div>
+                )}
               </div>
             </div>
 
             {/* Submit Button */}
-            <div>
-              <button
-                type="submit"
-                className="px-6 py-2 bg-yellow-300 text-black rounded-lg hover:bg-yellow-400 transition-colors font-medium"
-              >
-                Submit
-              </button>
-            </div>
-
-            {/* Links Section */}
-            <div className="space-y-4 pt-6 border-t border-yellow-300/30">
-              <h3 className="text-xl font-semibold text-yellow-300">
-                Additional Links
-              </h3>
-
-              {/* Add New Link */}
-              <div className="space-y-4">
-                <div>
-                  <label className="block mb-2 text-yellow-300">
-                    Link Label
-                  </label>
-                  <input
-                    type="text"
-                    name="linkLabel"
-                    value={formData.linkLabel}
-                    onChange={handleInputChange}
-                    maxLength={30}
-                    className="w-full px-4 py-2 bg-gray-800 border-2 border-yellow-300/50 rounded-xl focus:border-yellow-300 focus:outline-none text-yellow-300"
-                    placeholder="Enter button label"
-                  />
-                </div>
-
-                <div>
-                  <label className="block mb-2 text-yellow-300">Link URL</label>
-                  <div className="flex gap-2">
-                    <input
-                      type="text"
-                      name="linkUrl"
-                      value={formData.linkUrl}
-                      onChange={handleInputChange}
-                      className="flex-1 px-4 py-2 bg-gray-800 border-2 border-yellow-300/50 rounded-xl focus:border-yellow-300 focus:outline-none text-yellow-300"
-                      placeholder="Enter URL"
-                    />
-                    <button
-                      type="button"
-                      onClick={handleAddLink}
-                      disabled={!formData.linkLabel || !formData.linkUrl}
-                      className={`px-4 py-2 rounded-lg transition-colors ${
-                        !formData.linkLabel || !formData.linkUrl
-                          ? "bg-gray-600 cursor-not-allowed"
-                          : "bg-yellow-300 hover:bg-yellow-400 text-black"
-                      }`}
-                    >
-                      <Plus className="w-5 h-5" />
-                    </button>
-                  </div>
-                </div>
+            {isEditing && (
+              <div>
+                <button
+                  type="submit"
+                  className="px-6 py-2 bg-yellow-300 text-black rounded-lg hover:bg-yellow-400 transition-colors font-medium"
+                >
+                  Submit
+                </button>
               </div>
-
-              {/* Links List */}
-              {/* Links List */}
-              <div className="space-y-3">
-                {links.map((link, index) => (
-                  <div key={index} className="bg-gray-800/50 rounded-xl p-3">
-                    {editingLink?.index === index ? (
-                      <div className="space-y-3">
-                        <input
-                          type="text"
-                          value={editingLink.label}
-                          onChange={(e) =>
-                            setEditingLink((prev) =>
-                              prev ? { ...prev, label: e.target.value } : null
-                            )
-                          }
-                          className="w-full px-4 py-2 bg-gray-700 border-2 border-yellow-300/50 rounded-xl focus:border-yellow-300 focus:outline-none text-yellow-300"
-                          placeholder="Enter label"
-                        />
-                        <div className="flex gap-2">
-                          <input
-                            type="text"
-                            value={editingLink.url}
-                            onChange={(e) =>
-                              setEditingLink((prev) =>
-                                prev ? { ...prev, url: e.target.value } : null
-                              )
-                            }
-                            className="flex-1 px-4 py-2 bg-gray-700 border-2 border-yellow-300/50 rounded-xl focus:border-yellow-300 focus:outline-none text-yellow-300"
-                            placeholder="Enter URL"
-                          />
-                          <button
-                            type="button"
-                            onClick={(e) => {
-                              e.preventDefault();
-                              handleUpdateLink();
-                            }}
-                            className="p-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors"
-                          >
-                            <Save className="w-5 h-5" />
-                          </button>
-                          <button
-                            type="button"
-                            onClick={(e) => {
-                              e.preventDefault();
-                              setEditingLink(null);
-                            }}
-                            className="p-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors"
-                          >
-                            <X className="w-5 h-5" />
-                          </button>
-                        </div>
-                      </div>
-                    ) : (
-                      <div className="flex items-center justify-between">
-                        <a
-                          href={link.url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="font-medium text-yellow-300 truncate hover:text-yellow-400  w-[75%]"
-                        >
-                          <div className="flex items-center gap-3">
-                            <div className="flex-1 min-w-0">{link.label}</div>
-                          </div>
-                        </a>
-                        <div className="flex gap-2 shrink-0 border border-yellow-300 w-[25%] justify-around">
-                          <button
-                            type="button"
-                            onClick={() => handleEditLink(index)}
-                            className="p-2 text-blue-400 hover:bg-blue-400/10 rounded-lg transition-colors"
-                          >
-                            <Edit2 className="w-5 h-5" />
-                          </button>
-                          <button
-                            type="button"
-                            onClick={() => handleDeleteLink(index)}
-                            className="p-2 text-red-400 hover:bg-red-400/10 rounded-lg transition-colors"
-                          >
-                            <Trash2 className="w-5 h-5" />
-                          </button>
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                ))}
-              </div>
-            </div>
+            )}
           </form>
         </div>
       </div>
