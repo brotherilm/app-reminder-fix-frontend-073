@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { Trash2, Edit2, X, Plus, Save } from "lucide-react";
 
 interface AirdropData {
   airdropId: string;
@@ -120,7 +119,7 @@ const Note: React.FC<NoteCardProps> = ({ isOpen, onClose, airdropId }) => {
 
     // Split text by URLs and create an array of text and link elements
     const parts = text.split(urlRegex);
-    const matches = text.match(urlRegex) || [];
+    const matches: string[] = text.match(urlRegex) || [];
 
     return (
       <div className="whitespace-pre-wrap">
@@ -206,6 +205,9 @@ const Note: React.FC<NoteCardProps> = ({ isOpen, onClose, airdropId }) => {
                     value={formData.note}
                     onChange={handleInputChange}
                     className="w-full px-4 py-2 bg-gray-800 border-2 border-yellow-300/50 rounded-xl focus:border-yellow-300 focus:outline-none text-yellow-300 h-[500px] resize-none"
+                    aria-label="Additional Note"
+                    placeholder="Enter your notes here"
+                    title="Additional Note"
                   />
                 ) : (
                   <div className="w-full px-4 py-2 bg-gray-800 border-2 border-yellow-300/50 rounded-xl text-yellow-300 h-[500px] overflow-y-auto">
