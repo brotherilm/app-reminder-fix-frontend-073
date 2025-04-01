@@ -68,6 +68,15 @@ const Airdrop: React.FC = () => {
     useState<SelectedAccordition | null>(null);
   const [isSupportLoading, setSupportLoading] = useState(false);
   const [isSupportDisabled, setSupportDisabled] = useState(false);
+  const [selectedDay, setSelectedDay] = useState(
+    localStorage.getItem("selectedDay") || ""
+  );
+
+  const handleChangeDay = (event) => {
+    const day = event.target.value;
+    setSelectedDay(day);
+    localStorage.setItem("selectedDay", day);
+  };
 
   useEffect(() => {
     const fetchCountdown = async () => {
@@ -586,43 +595,43 @@ const Airdrop: React.FC = () => {
   };
 
   const toggleSupport = async (airdropId: string, support: number) => {
-  if (isSupportLoading) return;
-  setSupportLoading(true);
-  setSupportDisabled(true);
+    if (isSupportLoading) return;
+    setSupportLoading(true);
+    setSupportDisabled(true);
 
-  try {
-    const token = localStorage.getItem("token");
-    const userDataString = localStorage.getItem("user");
+    try {
+      const token = localStorage.getItem("token");
+      const userDataString = localStorage.getItem("user");
 
-    if (!token || !userDataString) {
-      throw new Error("Authentication token or user data not found");
-    }
-
-    const userData = JSON.parse(userDataString);
-
-    await axios.post(
-      `${process.env.NEXT_PUBLIC_API_URL}api/support-desktop`,
-      {
-        _id: userData.userId,
-        airdropId,
-        support,
-      },
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+      if (!token || !userDataString) {
+        throw new Error("Authentication token or user data not found");
       }
-    );
 
-    await fetchAirdropData();
-  } catch (error) {
-    setError("Failed to update support status");
-    console.error(error);
-  } finally {
-    setSupportLoading(false);
-    setSupportDisabled(false);
-  }
-};
+      const userData = JSON.parse(userDataString);
+
+      await axios.post(
+        `${process.env.NEXT_PUBLIC_API_URL}api/support-desktop`,
+        {
+          _id: userData.userId,
+          airdropId,
+          support,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      await fetchAirdropData();
+    } catch (error) {
+      setError("Failed to update support status");
+      console.error(error);
+    } finally {
+      setSupportLoading(false);
+      setSupportDisabled(false);
+    }
+  };
 
   const handleAirdropCreated = async (newAirdrop: any) => {
     setAirdropData((prevData) => [...prevData, newAirdrop]);
@@ -729,6 +738,8 @@ const Airdrop: React.FC = () => {
               {sortedAirdropData.map(
                 (item, index) =>
                   item.rating == rating &&
+                  (selectedDay === "" ||
+                    item[selectedDay.toLowerCase()] === true) &&
                   (!supportDesktopOnly || item.support === 1) && (
                     <div
                       key={index}
@@ -748,6 +759,7 @@ const Airdrop: React.FC = () => {
                               {item.attempt || "0"}
                             </span>
                           </div>
+
                           <div className="items-center mt-4 text-yellow-400 font-medium">
                             <TruncatedName name={item.name} />
                           </div>
@@ -881,6 +893,7 @@ const Airdrop: React.FC = () => {
                               />
                             </a>
                           </div>
+
                           <input
                             onClick={() =>
                               toggleSupport(
@@ -959,7 +972,26 @@ const Airdrop: React.FC = () => {
             />
             <span>Checkbox</span>
           </label>
+          <div>
+            <label htmlFor="hari">Pilih Hari: </label>
+            <select
+              id="hari"
+              value={selectedDay}
+              className="text-black"
+              onChange={handleChangeDay}
+            >
+              <option value="">-- Pilih Hari --</option>
+              <option value="Senin">Senin</option>
+              <option value="Selasa">Selasa</option>
+              <option value="Rabu">Rabu</option>
+              <option value="Kamis">Kamis</option>
+              <option value="Jumat">Jumat</option>
+              <option value="Sabtu">Sabtu</option>
+              <option value="Minggu">Minggu</option>
+            </select>
+          </div>
         </div>
+
         <div>
           <a
             href="https://drive.google.com/drive/u/1/folders/1YZsQoORy-9S7FpON5RLNKryCj4GBfhHZ"
