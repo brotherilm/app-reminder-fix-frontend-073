@@ -20,6 +20,13 @@ interface AirdropFormData {
   LinkTelegramChannel?: string;
   LinkWebAnnountcement?: string;
   LinkX?: string;
+  senin?: boolean;
+  selasa?: boolean;
+  rabu?: boolean;
+  kamis?: boolean;
+  jumat?: boolean;
+  sabtu?: boolean;
+  minggu?: boolean;
 }
 
 interface Accordition {
@@ -47,6 +54,13 @@ const EditCard: React.FC<EditCardProps> = ({
     LinkTelegramChannel: "",
     LinkWebAnnountcement: "",
     LinkX: "",
+    senin: false,
+    selasa: false,
+    rabu: false,
+    kamis: false,
+    jumat: false,
+    sabtu: false,
+    minggu: false,
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [accorditions, setAccorditions] = useState<Accordition[]>([]);
@@ -118,6 +132,13 @@ const EditCard: React.FC<EditCardProps> = ({
             LinkTelegramChannel: specificAirdrop.LinkTelegramChannel || "",
             LinkWebAnnountcement: specificAirdrop.LinkWebAnnountcement || "",
             LinkX: specificAirdrop.LinkX || "",
+            senin: specificAirdrop.senin,
+            selasa: specificAirdrop.selasa,
+            rabu: specificAirdrop.rabu,
+            kamis: specificAirdrop.kamis,
+            jumat: specificAirdrop.jumat,
+            sabtu: specificAirdrop.sabtu,
+            minggu: specificAirdrop.minggu,
           });
         }
       } catch (error) {
@@ -138,6 +159,14 @@ const EditCard: React.FC<EditCardProps> = ({
     setFormData((prev) => ({
       ...prev,
       [name]: value,
+    }));
+  };
+
+  const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, checked } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: checked,
     }));
   };
 
@@ -212,6 +241,107 @@ const EditCard: React.FC<EditCardProps> = ({
           <form onSubmit={handleSubmit} className="space-y-6">
             <div className="space-y-4">
               <div>
+                <div className="flex space-x-3">
+                  <div className="flex items-center">
+                    <input
+                      type="checkbox"
+                      id="senin"
+                      name="senin"
+                      checked={formData.senin}
+                      onChange={handleCheckboxChange}     
+                      className="mr-1 h-4 w-4 text-yellow-400 rounded border-yellow-400/30 focus:ring-yellow-400"
+                    />
+                    <label htmlFor="senin" className="text-sm text-white">
+                      Senin
+                    </label>
+                  </div>
+                  <div className="flex items-center">
+                    <input
+                      type="checkbox"
+                      id="selasa"
+                      name="selasa"
+                      checked={formData.selasa}
+                      onChange={handleCheckboxChange}
+                      className="mr-1 h-4 w-4 text-yellow-400 rounded border-yellow-400/30 focus:ring-yellow-400"
+                    />
+                    <label htmlFor="selasa" className="text-sm text-white">
+                      Selasa
+                    </label>
+                  </div>
+                  <div className="flex items-center">
+                    <input
+                      type="checkbox"
+                      id="rabu"
+                      name="rabu"
+                      checked={formData.rabu}
+                      onChange={handleCheckboxChange}
+                      className="mr-1 h-4 w-4 text-yellow-400 rounded border-yellow-400/30 focus:ring-yellow-400"
+                    />
+                    <label htmlFor="rabu" className="text-sm text-white">
+                      Rabu
+                    </label>
+                  </div>
+                  <div className="flex items-center">
+                    <input
+                      type="checkbox"
+                      id="kamis"
+                      name="kamis"
+                      checked={formData.kamis}
+                      onChange={handleCheckboxChange}
+                      className="mr-1 h-4 w-4 text-yellow-400 rounded border-yellow-400/30 focus:ring-yellow-400"
+                    />
+                    <label htmlFor="kamis" className="text-sm text-white">
+                      Kamis
+                    </label>
+                  </div>
+                  <div className="flex items-center">
+                    <input
+                      type="checkbox"
+                      id="jumat"
+                      name="jumat"
+                      checked={formData.jumat}
+                      onChange={handleCheckboxChange}
+                      className="mr-1 h-4 w-4 text-yellow-400 rounded border-yellow-400/30 focus:ring-yellow-400"
+                    />
+                    <label htmlFor="jumat" className="text-sm text-white">
+                      Jumat
+                    </label>
+                  </div>
+                  <div className="flex items-center">
+                    <input
+                      type="checkbox"
+                      id="sabtu"
+                      name="sabtu"
+                      checked={formData.sabtu}
+                      onChange={handleCheckboxChange}
+                      className="mr-1 h-4 w-4 text-yellow-400 rounded border-yellow-400/30 focus:ring-yellow-400"
+                    />
+                    <label htmlFor="sabtu" className="text-sm text-white">
+                      Sabtu
+                    </label>
+                  </div>
+                  <div className="flex items-center">
+                    <input
+                      type="checkbox"
+                      id="minggu"
+                      name="minggu"
+                      checked={formData.minggu}
+                      onChange={handleCheckboxChange}
+                      className="mr-1 h-4 w-4 text-yellow-400 rounded border-yellow-400/30 focus:ring-yellow-400"
+                    />
+                    <label htmlFor="minggu" className="text-sm text-white">
+                      Minggu
+                    </label>
+                  </div>
+                </div>
+                <input
+                  type="text"
+                  name="name"
+                  value={formData.name}
+                  onChange={handleInputChange}
+                  className="w-full px-4 py-2 bg-zinc-800 border-2 border-yellow-400/30 rounded-lg focus:border-yellow-400 focus:outline-none text-white"
+                  required
+                />
                 <label className="block text-sm font-medium text-yellow-400 mb-1">
                   Name *
                 </label>
