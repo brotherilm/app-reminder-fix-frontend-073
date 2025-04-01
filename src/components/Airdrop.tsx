@@ -72,12 +72,12 @@ const Airdrop: React.FC = () => {
     localStorage.getItem("selectedDay") || ""
   );
 
-  const handleChangeDay = (event) => {
+  const handleChangeDay = (event: React.ChangeEvent<HTMLSelectElement>) => {
     const day = event.target.value;
     setSelectedDay(day);
     localStorage.setItem("selectedDay", day);
   };
-
+  
   useEffect(() => {
     const fetchCountdown = async () => {
       try {
