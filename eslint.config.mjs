@@ -14,6 +14,7 @@ const eslintConfig = [
   {
     rules: {
       "@typescript-eslint/no-explicit-any": "off",
+       "@typescript-eslint/no-implicit-any": "off", 
       "@typescript-eslint/no-unused-vars": "off", // Menonaktifkan error untuk variabel yang tidak digunakan
       "@next/next/no-html-link-for-pages": "off", // Mengizinkan penggunaan <a> tanpa <Link />
       "react/no-unescaped-entities": "off",
