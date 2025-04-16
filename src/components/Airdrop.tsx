@@ -77,7 +77,7 @@ const Airdrop: React.FC = () => {
     setSelectedDay(day);
     localStorage.setItem("selectedDay", day);
   };
-  
+
   useEffect(() => {
     const fetchCountdown = async () => {
       try {
@@ -754,8 +754,8 @@ const Airdrop: React.FC = () => {
                       <div className="flex justify-between">
                         <div className="flex-1">
                           <div className="flex items-center text-gray-300">
-                            <span className="text-sm mr-1">Attempts:</span>
-                            <span className="font-medium text-yellow-400">
+                            <span className="mr-1 text-[20px]">Attempts:</span>
+                            <span className="text-[20px] text-yellow-400">
                               {item.attempt || "0"}
                             </span>
                           </div>
@@ -838,28 +838,6 @@ const Airdrop: React.FC = () => {
                         <div className="flex gap-2 mt-2 justify-between">
                           <div className="flex">
                             <a
-                              href={
-                                item.LinkTelegramPlay || "https://telegram.org"
-                              }
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              onClick={() =>
-                                handleClickLinkPlay(item.airdropId, item.timer)
-                              }
-                              style={{
-                                pointerEvents: isDisabledLink ? "none" : "auto",
-                                opacity: isDisabledLink ? 0.6 : 1,
-                              }}
-                            >
-                              <Image
-                                src="/assets/telegram.png"
-                                width={32}
-                                height={32}
-                                className="mr-1 w-8 sm:w-9 hover:border-blue-500 border-2 border-transparent rounded-lg transition-colors"
-                                alt="telegram"
-                              />
-                            </a>
-                            <a
                               href={item.LinkWebPlay || "https://google.com"}
                               target="_blank"
                               rel="noopener noreferrer"
@@ -877,19 +855,6 @@ const Airdrop: React.FC = () => {
                                 height={32}
                                 className="mr-1 w-8 sm:w-9 hover:border-blue-500 border-2 border-transparent rounded-lg transition-colors"
                                 alt="web"
-                              />
-                            </a>
-                            <a
-                              href={item.LinkX || "https://google.com"}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                            >
-                              <Image
-                                src="https://ik.imagekit.io/fs0yie8l6/1690643591twitter-x-logo-png.webp%20(1).png?updatedAt=1738293353975"
-                                width={32}
-                                height={32}
-                                className="w-8 sm:w-9 hover:border-blue-500 border-2 border-transparent rounded-lg transition-colors"
-                                alt="X"
                               />
                             </a>
                           </div>
@@ -943,133 +908,139 @@ const Airdrop: React.FC = () => {
   if (error) return <div>{error}</div>;
 
   return (
-    <div>
-      <SearchInput
-        airdropData={airdropData}
-        setFilteredAirdropData={setFilteredAirdropData}
-      />
-      {loading && <p>Loading...</p>}
-      {error && <p>{error}</p>}
+    <div className="flex">
+      <div
+        className={`${
+          isNoteOpen ? "w-[70%]" : "w-full"
+        } transition-all duration-300`}
+      >
+        <SearchInput
+          airdropData={airdropData}
+          setFilteredAirdropData={setFilteredAirdropData}
+        />
+        {loading && <p>Loading...</p>}
+        {error && <p>{error}</p>}
+        {remainingTime !== null && isCountdownActive ? (
+          <p className="text-base md:text-xl text-yellow-300 font-semibold ml-4 md:ml-4">
+            Reset Attempt (07:00 WIB) : {formatTime(remainingTime)}
+          </p>
+        ) : showResetButton ? (
+          <p className="text-xl text-red-500 font-semibold">
+            <GlobalTime />
+          </p>
+        ) : null}
+        <span className="ml-4">
+          Total Airdrop: {filteredAirdropData.length}
+        </span>
+        <div className="flex items-center justify-between">
+          <div className="flex items-center m-4">
+            <label className="mr-4 flex items-center">
+              <input
+                type="checkbox"
+                checked={supportDesktopOnly}
+                onChange={toggleSupportFilter}
+                className="mr-2 w-5 h-5"
+              />
+              <span>Checkbox</span>
+            </label>
+            <div>
+              <label htmlFor="hari">Pilih Hari: </label>
+              <select
+                id="hari"
+                value={selectedDay}
+                className="text-black"
+                onChange={handleChangeDay}
+              >
+                <option value="">-- Pilih Hari --</option>
+                <option value="Senin">Senin</option>
+                <option value="Selasa">Selasa</option>
+                <option value="Rabu">Rabu</option>
+                <option value="Kamis">Kamis</option>
+                <option value="Jumat">Jumat</option>
+                <option value="Sabtu">Sabtu</option>
+                <option value="Minggu">Minggu</option>
+              </select>
+            </div>
+          </div>
 
-      {remainingTime !== null && isCountdownActive ? (
-        <p className="text-base md:text-xl text-yellow-300 font-semibold ml-4 md:ml-4">
-          Reset Attempt (07:00 WIB) : {formatTime(remainingTime)}
-        </p>
-      ) : showResetButton ? (
-        <p className="text-xl text-red-500 font-semibold">
-          <GlobalTime />
-        </p>
-      ) : null}
-      <span className="ml-4">Total Airdrop: {filteredAirdropData.length}</span>
-      <div className="flex items-center justify-between">
-        <div className="flex items-center m-4">
-          <label className="mr-4 flex items-center">
-            <input
-              type="checkbox"
-              checked={supportDesktopOnly}
-              onChange={toggleSupportFilter}
-              className="mr-2 w-5 h-5"
-            />
-            <span>Checkbox</span>
-          </label>
           <div>
-            <label htmlFor="hari">Pilih Hari: </label>
-            <select
-              id="hari"
-              value={selectedDay}
-              className="text-black"
-              onChange={handleChangeDay}
+            <a
+              href="https://drive.google.com/drive/u/1/folders/1YZsQoORy-9S7FpON5RLNKryCj4GBfhHZ"
+              className="bg-yellow-300 text-black p-4 rounded-xl mr-4"
+              target="_blank"
             >
-              <option value="">-- Pilih Hari --</option>
-              <option value="Senin">Senin</option>
-              <option value="Selasa">Selasa</option>
-              <option value="Rabu">Rabu</option>
-              <option value="Kamis">Kamis</option>
-              <option value="Jumat">Jumat</option>
-              <option value="Sabtu">Sabtu</option>
-              <option value="Minggu">Minggu</option>
-            </select>
+              Link Wallet
+            </a>
           </div>
         </div>
+        <div className="font-manrope">
+          {/* Render accordions */}
+          {accorditions.map((_, index) => renderAirdropSection(index + 1))}
 
-        <div>
-          <a
-            href="https://drive.google.com/drive/u/1/folders/1YZsQoORy-9S7FpON5RLNKryCj4GBfhHZ"
-            className="bg-yellow-300 text-black p-4 rounded-xl mr-4"
-            target="_blank"
+          <form
+            onSubmit={createAccordition}
+            className="flex items-center gap-2 mx-2 sm:mx-4 mt-4"
           >
-            Link Wallet
-          </a>
+            {/* Input field untuk custom name */}
+            <input
+              type="text"
+              value={newAccorditionLabel}
+              onChange={(e) => {
+                setNewAccorditionLabel(e.target.value);
+                setError(""); // Reset pesan error saat user mulai mengetik
+              }}
+              placeholder="Enter custom name"
+              className="flex-1 bg-gray-800 text-yellow-400 placeholder-yellow-400/50 border-2 border-yellow-400/50 p-3 rounded-lg focus:outline-none focus:border-yellow-400"
+              required
+            />
+
+            {/* Button untuk menambahkan accordition baru */}
+            <button
+              type="submit"
+              className="flex items-center gap-2 bg-gray-800 text-yellow-400 border-2 border-yellow-400/50 px-4 py-3 rounded-lg focus:outline-none focus:border-yellow-400"
+            >
+              <span className="hidden sm:inline">Add</span>
+              <span className="text-xl">➕</span>
+            </button>
+          </form>
+
+          {/* Tampilkan pesan error jika ada */}
+          {error && (
+            <p className="text-red-500 text-sm mt-2 mx-2 sm:mx-4">{error}</p>
+          )}
         </div>
+        <AccorditionDeleteConfirmationModal
+          isOpen={accorditionDeleteModalOpen}
+          onClose={() => {
+            setAccorditionDeleteModalOpen(false);
+            setSelectedAccorditionToDelete(null);
+          }}
+          onConfirm={handleConfirmAccorditionDelete}
+          accorditionLabel={selectedAccorditionToDelete?.label || ""}
+        />
+        <DeleteConfirmationModal
+          isOpen={isDeleteModalOpen}
+          onClose={closeDeleteConfirmation}
+          onConfirm={handleDeleteAirdrop}
+        />
+        <EditCard
+          isOpen={isEditOpen}
+          onClose={handleCloseEdit}
+          airdropId={selectedAirdropId}
+          onUpdate={fetchAirdropData}
+        />
+
+        <Form onAirdropCreated={handleAirdropCreated} />
       </div>
-
-      <div className="font-manrope">
-        {/* Render accordions */}
-        {accorditions.map((_, index) => renderAirdropSection(index + 1))}
-
-        <form
-          onSubmit={createAccordition}
-          className="flex items-center gap-2 mx-2 sm:mx-4 mt-4"
-        >
-          {/* Input field untuk custom name */}
-          <input
-            type="text"
-            value={newAccorditionLabel}
-            onChange={(e) => {
-              setNewAccorditionLabel(e.target.value);
-              setError(""); // Reset pesan error saat user mulai mengetik
-            }}
-            placeholder="Enter custom name"
-            className="flex-1 bg-gray-800 text-yellow-400 placeholder-yellow-400/50 border-2 border-yellow-400/50 p-3 rounded-lg focus:outline-none focus:border-yellow-400"
-            required
+      {isNoteOpen && selectedAirdropId && (
+        <div className="w-[30%]">
+          <Note
+            isOpen={isNoteOpen}
+            onClose={handleCloseNote}
+            airdropId={selectedAirdropId}
           />
-
-          {/* Button untuk menambahkan accordition baru */}
-          <button
-            type="submit"
-            className="flex items-center gap-2 bg-gray-800 text-yellow-400 border-2 border-yellow-400/50 px-4 py-3 rounded-lg focus:outline-none focus:border-yellow-400"
-          >
-            <span className="hidden sm:inline">Add</span>
-            <span className="text-xl">➕</span>
-          </button>
-        </form>
-
-        {/* Tampilkan pesan error jika ada */}
-        {error && (
-          <p className="text-red-500 text-sm mt-2 mx-2 sm:mx-4">{error}</p>
-        )}
-      </div>
-
-      <AccorditionDeleteConfirmationModal
-        isOpen={accorditionDeleteModalOpen}
-        onClose={() => {
-          setAccorditionDeleteModalOpen(false);
-          setSelectedAccorditionToDelete(null);
-        }}
-        onConfirm={handleConfirmAccorditionDelete}
-        accorditionLabel={selectedAccorditionToDelete?.label || ""}
-      />
-
-      <DeleteConfirmationModal
-        isOpen={isDeleteModalOpen}
-        onClose={closeDeleteConfirmation}
-        onConfirm={handleDeleteAirdrop}
-      />
-
-      <EditCard
-        isOpen={isEditOpen}
-        onClose={handleCloseEdit}
-        airdropId={selectedAirdropId}
-        onUpdate={fetchAirdropData}
-      />
-
-      <Note
-        isOpen={isNoteOpen}
-        onClose={handleCloseNote}
-        airdropId={selectedAirdropId}
-      />
-
-      <Form onAirdropCreated={handleAirdropCreated} />
+        </div>
+      )}
     </div>
   );
 };
