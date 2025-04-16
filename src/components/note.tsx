@@ -11,11 +11,11 @@ interface AirdropData {
   note?: string;
 }
 
-interface NoteCardProps {
+type NoteCardProps = {
   isOpen: boolean;
   onClose: () => void;
-  airdropId: string | null;
-}
+  airdropId: string;
+};
 
 const Note: React.FC<NoteCardProps> = ({ isOpen, onClose, airdropId }) => {
   const [error, setError] = useState<string>("");
@@ -150,23 +150,31 @@ const Note: React.FC<NoteCardProps> = ({ isOpen, onClose, airdropId }) => {
   if (!isOpen || !airdropData) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/80 flex items-center justify-center p-4 z-50">
+    <div className="w-full h-full">
       {/* Error Toast */}
       {error && (
         <div className="absolute top-4 right-4 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-xl shadow-lg">
           {error}
         </div>
       )}
-
       {/* Modal Container */}
-      <div className="bg-black border-4 border-yellow-300 rounded-2xl shadow-xl w-full max-w-2xl max-h-[90vh] flex flex-col">
+      <div className="bg-black border-4 border-yellow-300 rounded-2xl shadow-xl w-[100%] h-full">
         {/* Fixed Header */}
-        <div className="sticky top-0 bg-black z-10 px-6 py-4 border-b rounded-t-2xl border-yellow-300">
+        <div className="sticky top-0 bg-black z-10 px-6 py-4 border-b rounded-t-2xl border-yellow-300 ">
           <div className="flex justify-between items-center">
             <h2 className="text-2xl font-bold text-yellow-300">
-              More Information
+              {airdropData.name || "Airdrop Details"}
             </h2>
             <div className="flex gap-2">
+              {isEditing && (
+                <button
+                  type="button"
+                  onClick={handleSubmit}
+                  className="px-4 py-2 bg-yellow-300 text-black rounded-lg hover:bg-yellow-400 transition-colors font-medium"
+                >
+                  Submit
+                </button>
+              )}
               <button
                 onClick={() => setIsEditing(!isEditing)}
                 className="px-4 py-2 border border-yellow-300 text-yellow-300 rounded-lg hover:bg-yellow-300 hover:text-black transition-colors"
@@ -186,48 +194,26 @@ const Note: React.FC<NoteCardProps> = ({ isOpen, onClose, airdropId }) => {
         {/* Scrollable Content */}
         <div className="flex-1 overflow-y-auto p-6">
           <form onSubmit={handleSubmit} className="space-y-6">
-            {/* Airdrop Name */}
-            <div>
-              <h3 className="text-2xl font-semibold text-yellow-300 mb-6">
-                {airdropData.name || "Unnamed Airdrop"}
-              </h3>
-            </div>
-
             {/* Basic Information */}
             <div className="space-y-4">
               <div>
-                <label className="block mb-2 text-yellow-300">
-                  Additional Note
-                </label>
                 {isEditing ? (
                   <textarea
                     name="note"
                     value={formData.note}
                     onChange={handleInputChange}
-                    className="w-full px-4 py-2 bg-gray-800 border-2 border-yellow-300/50 rounded-xl focus:border-yellow-300 focus:outline-none text-yellow-300 h-[500px] resize-none"
+                    className="w-full px-4 py-2 bg-gray-800 border-2 border-yellow-300/50 rounded-xl focus:border-yellow-300 focus:outline-none text-yellow-300 h-full min-h-screen resize-none"
                     aria-label="Additional Note"
                     placeholder="Enter your notes here"
                     title="Additional Note"
                   />
                 ) : (
-                  <div className="w-full px-4 py-2 bg-gray-800 border-2 border-yellow-300/50 rounded-xl text-yellow-300 h-[500px] overflow-y-auto">
+                  <div className="w-full px-4 py-2 bg-gray-800 border-2 border-yellow-300/50 rounded-xl text-yellow-300 h-full min-h-screen overflow-y-auto">
                     {renderTextWithLinks(formData.note)}
                   </div>
                 )}
               </div>
             </div>
-
-            {/* Submit Button */}
-            {isEditing && (
-              <div>
-                <button
-                  type="submit"
-                  className="px-6 py-2 bg-yellow-300 text-black rounded-lg hover:bg-yellow-400 transition-colors font-medium"
-                >
-                  Submit
-                </button>
-              </div>
-            )}
           </form>
         </div>
       </div>
