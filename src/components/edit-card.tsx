@@ -248,7 +248,7 @@ const EditCard: React.FC<EditCardProps> = ({
                       id="senin"
                       name="senin"
                       checked={formData.senin}
-                      onChange={handleCheckboxChange}     
+                      onChange={handleCheckboxChange}
                       className="mr-1 h-4 w-4 text-yellow-400 rounded border-yellow-400/30 focus:ring-yellow-400"
                     />
                     <label htmlFor="senin" className="text-sm text-white">
