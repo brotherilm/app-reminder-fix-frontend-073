@@ -857,6 +857,49 @@ const Airdrop: React.FC = () => {
                                 alt="web"
                               />
                             </a>
+                            <a
+                              href={
+                                item.LinkTelegramPlay || "https://discord.com"
+                              }
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              onClick={() =>
+                                handleClickLinkPlay(item.airdropId, item.timer)
+                              }
+                              style={{
+                                pointerEvents: isDisabledLink ? "none" : "auto",
+                                opacity: isDisabledLink ? 0.6 : 1,
+                              }}
+                            >
+                              <Image
+                                src="/assets/discord-logo.jpg"
+                                width={32}
+                                height={32}
+                                className="mr-1 w-8 sm:w-9 hover:border-blue-500 border-2 border-transparent rounded-lg transition-colors"
+                                alt="web"
+                              />
+                            </a>
+                            <a
+                              href={
+                                item.LinkX
+                                  ? `https://x.com/search?q=${encodeURIComponent(
+                                      item.LinkX
+                                    )}&src=typed_query`
+                                  : "https://x.com"
+                              }
+                              style={{
+                                pointerEvents: isDisabledLink ? "none" : "auto",
+                                opacity: isDisabledLink ? 0.6 : 1,
+                              }}
+                            >
+                              <Image
+                                src="/assets/X-Logo.png"
+                                width={32}
+                                height={32}
+                                className="mr-1 w-8 sm:w-9 hover:border-blue-500 border-2 border-transparent rounded-lg transition-colors"
+                                alt="web"
+                              />
+                            </a>
                           </div>
 
                           <input
@@ -893,17 +936,6 @@ const Airdrop: React.FC = () => {
       </div>
     );
   };
-
-  // if (loading)
-  //   return (
-  //     <div className="flex justify-center items-center h-screen">
-  //       <div className="flex flex-col items-center space-y-4">
-  //         <div className="text-2xl font-semibold text-gray-800">Loading...</div>
-  //         <div className="w-16 h-16 border-4 border-t-4 border-blue-600 border-solid rounded-full animate-spin"></div>
-  //         <div className="text-sm text-gray-500">Please wait a moment</div>
-  //       </div>
-  //     </div>
-  //   );
 
   if (error) return <div>{error}</div>;
 
