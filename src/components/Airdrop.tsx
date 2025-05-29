@@ -10,6 +10,7 @@ import TruncatedName from "./modals/TruncatedName";
 import GlobalTime from "./modals/GlobalTime";
 import Image from "next/image";
 import AccorditionDeleteConfirmationModal from "./modals/AccorditionDeleteConfirmationModal";
+import Profit from "./Profit";
 
 // Interface for selected accordition
 interface SelectedAccordition {
@@ -25,6 +26,9 @@ interface AirdropItem {
   timer?: string;
   rating: number;
   support?: number;
+  modal?: number;
+  funding?: number;
+  profit?: number;
 }
 
 interface Accordition {
@@ -71,6 +75,15 @@ const Airdrop: React.FC = () => {
   const [selectedDay, setSelectedDay] = useState(
     localStorage.getItem("selectedDay") || ""
   );
+  const [isProfitOpen, setIsProfitOpen] = useState(false);
+
+  const handleOpenProfit = () => {
+    setIsProfitOpen(true);
+  };
+
+  const handleCloseProfit = () => {
+    setIsProfitOpen(false);
+  };
 
   const handleChangeDay = (event: React.ChangeEvent<HTMLSelectElement>) => {
     const day = event.target.value;
@@ -769,6 +782,21 @@ const Airdrop: React.FC = () => {
                               {convertMinutesToTime(item.timer)}
                             </span>
                           </div>
+                          <div className="text-gray-300 flex flex-col">
+                            <span className="text-lg">Funding:</span>
+                            <div>
+                              <span className="text-[25px] font-bold text-yellow-400">
+                                {item.funding || "-"}
+                              </span>
+                              {item.funding &&
+                                item.funding !== "-" &&
+                                item.funding !== "0" && (
+                                  <span className="text-[25px] font-bold text-yellow-400">
+                                    M
+                                  </span>
+                                )}
+                            </div>
+                          </div>
                           <div className="flex items-center">
                             <AirdropCountdown
                               countdown={item.countdown}
@@ -831,7 +859,7 @@ const Airdrop: React.FC = () => {
                       </div>
 
                       {/* Airdrop Play Section */}
-                      <div className="mt-4">
+                      <div className="">
                         <span className="text-gray-300 text-sm">
                           Airdrop Play:
                         </span>
@@ -975,34 +1003,19 @@ const Airdrop: React.FC = () => {
               />
               <span>Checkbox</span>
             </label>
-            <div>
-              <label htmlFor="hari">Pilih Hari: </label>
-              <select
-                id="hari"
-                value={selectedDay}
-                className="text-black"
-                onChange={handleChangeDay}
-              >
-                <option value="">-- Pilih Hari --</option>
-                <option value="Senin">Senin</option>
-                <option value="Selasa">Selasa</option>
-                <option value="Rabu">Rabu</option>
-                <option value="Kamis">Kamis</option>
-                <option value="Jumat">Jumat</option>
-                <option value="Sabtu">Sabtu</option>
-                <option value="Minggu">Minggu</option>
-              </select>
-            </div>
           </div>
-
           <div>
-            <a
-              href="https://drive.google.com/drive/u/1/folders/1YZsQoORy-9S7FpON5RLNKryCj4GBfhHZ"
-              className="bg-yellow-300 text-black p-4 rounded-xl mr-4"
-              target="_blank"
+            <button
+              onClick={handleOpenProfit}
+              disabled={isDisabled}
+              className={`cursor-pointer bg-yellow-300 text-black p-4 rounded-xl mr-4 ${
+                isDisabled
+                  ? "opacity-50 cursor-not-allowed"
+                  : "hover:bg-yellow-400"
+              }`}
             >
-              Link Wallet
-            </a>
+              Analysis Profit
+            </button>
           </div>
         </div>
         <div className="font-manrope">
@@ -1061,6 +1074,7 @@ const Airdrop: React.FC = () => {
           airdropId={selectedAirdropId}
           onUpdate={fetchAirdropData}
         />
+        <Profit isOpen={isProfitOpen} onClose={handleCloseProfit} />
 
         <Form onAirdropCreated={handleAirdropCreated} />
       </div>

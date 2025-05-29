@@ -27,6 +27,9 @@ interface AirdropFormData {
   jumat?: boolean;
   sabtu?: boolean;
   minggu?: boolean;
+  funding?: number;
+  modal?: number;
+  profit?: number;
 }
 
 interface Accordition {
@@ -61,6 +64,9 @@ const EditCard: React.FC<EditCardProps> = ({
     jumat: false,
     sabtu: false,
     minggu: false,
+    funding: 0,
+    modal: 0,
+    profit: 0,
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [accorditions, setAccorditions] = useState<Accordition[]>([]);
@@ -139,6 +145,9 @@ const EditCard: React.FC<EditCardProps> = ({
             jumat: specificAirdrop.jumat,
             sabtu: specificAirdrop.sabtu,
             minggu: specificAirdrop.minggu,
+            funding: specificAirdrop.funding || 0,
+            modal: specificAirdrop.modal || 0,
+            profit: specificAirdrop.profit || 0,
           });
         }
       } catch (error) {
@@ -241,107 +250,6 @@ const EditCard: React.FC<EditCardProps> = ({
           <form onSubmit={handleSubmit} className="space-y-6">
             <div className="space-y-4">
               <div>
-                <div className="flex space-x-3">
-                  <div className="flex items-center">
-                    <input
-                      type="checkbox"
-                      id="senin"
-                      name="senin"
-                      checked={formData.senin}
-                      onChange={handleCheckboxChange}
-                      className="mr-1 h-4 w-4 text-yellow-400 rounded border-yellow-400/30 focus:ring-yellow-400"
-                    />
-                    <label htmlFor="senin" className="text-sm text-white">
-                      Senin
-                    </label>
-                  </div>
-                  <div className="flex items-center">
-                    <input
-                      type="checkbox"
-                      id="selasa"
-                      name="selasa"
-                      checked={formData.selasa}
-                      onChange={handleCheckboxChange}
-                      className="mr-1 h-4 w-4 text-yellow-400 rounded border-yellow-400/30 focus:ring-yellow-400"
-                    />
-                    <label htmlFor="selasa" className="text-sm text-white">
-                      Selasa
-                    </label>
-                  </div>
-                  <div className="flex items-center">
-                    <input
-                      type="checkbox"
-                      id="rabu"
-                      name="rabu"
-                      checked={formData.rabu}
-                      onChange={handleCheckboxChange}
-                      className="mr-1 h-4 w-4 text-yellow-400 rounded border-yellow-400/30 focus:ring-yellow-400"
-                    />
-                    <label htmlFor="rabu" className="text-sm text-white">
-                      Rabu
-                    </label>
-                  </div>
-                  <div className="flex items-center">
-                    <input
-                      type="checkbox"
-                      id="kamis"
-                      name="kamis"
-                      checked={formData.kamis}
-                      onChange={handleCheckboxChange}
-                      className="mr-1 h-4 w-4 text-yellow-400 rounded border-yellow-400/30 focus:ring-yellow-400"
-                    />
-                    <label htmlFor="kamis" className="text-sm text-white">
-                      Kamis
-                    </label>
-                  </div>
-                  <div className="flex items-center">
-                    <input
-                      type="checkbox"
-                      id="jumat"
-                      name="jumat"
-                      checked={formData.jumat}
-                      onChange={handleCheckboxChange}
-                      className="mr-1 h-4 w-4 text-yellow-400 rounded border-yellow-400/30 focus:ring-yellow-400"
-                    />
-                    <label htmlFor="jumat" className="text-sm text-white">
-                      Jumat
-                    </label>
-                  </div>
-                  <div className="flex items-center">
-                    <input
-                      type="checkbox"
-                      id="sabtu"
-                      name="sabtu"
-                      checked={formData.sabtu}
-                      onChange={handleCheckboxChange}
-                      className="mr-1 h-4 w-4 text-yellow-400 rounded border-yellow-400/30 focus:ring-yellow-400"
-                    />
-                    <label htmlFor="sabtu" className="text-sm text-white">
-                      Sabtu
-                    </label>
-                  </div>
-                  <div className="flex items-center">
-                    <input
-                      type="checkbox"
-                      id="minggu"
-                      name="minggu"
-                      checked={formData.minggu}
-                      onChange={handleCheckboxChange}
-                      className="mr-1 h-4 w-4 text-yellow-400 rounded border-yellow-400/30 focus:ring-yellow-400"
-                    />
-                    <label htmlFor="minggu" className="text-sm text-white">
-                      Minggu
-                    </label>
-                  </div>
-                </div>
-                <input
-                  type="text"
-                  name="name"
-                  value={formData.name}
-                  onChange={handleInputChange}
-                  className="w-full px-4 py-2 bg-zinc-800 border-2 border-yellow-400/30 rounded-lg focus:border-yellow-400 focus:outline-none text-white"
-                  required
-                />
                 <label className="block text-sm font-medium text-yellow-400 mb-1">
                   Name *
                 </label>
@@ -386,7 +294,7 @@ const EditCard: React.FC<EditCardProps> = ({
 
               <div>
                 <label className="block text-sm font-medium text-yellow-400 mb-1">
-                  Airdrop Rating
+                  Airdrop Group
                 </label>
                 <select
                   name="rating"
@@ -405,7 +313,7 @@ const EditCard: React.FC<EditCardProps> = ({
               <div className="grid md:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-yellow-400 mb-1">
-                    Telegram Link Play
+                    Discord Link Play
                   </label>
                   <input
                     type="text"
@@ -441,6 +349,46 @@ const EditCard: React.FC<EditCardProps> = ({
                   onChange={handleInputChange}
                   className="w-full px-4 py-2 bg-zinc-800 border-2 border-yellow-400/30 rounded-lg focus:border-yellow-400 focus:outline-none text-white"
                 />
+              </div>
+
+              <div className="grid md:grid-cols-3 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-yellow-400 mb-1">
+                    Funding
+                  </label>
+                  <input
+                    type="text"
+                    name="funding"
+                    value={formData.funding}
+                    onChange={handleInputChange}
+                    className="w-full px-4 py-2 bg-zinc-800 border-2 border-yellow-400/30 rounded-lg focus:border-yellow-400 focus:outline-none text-white"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-yellow-400 mb-1">
+                    Modal
+                  </label>
+                  <input
+                    type="text"
+                    name="modal"
+                    value={formData.modal}
+                    onChange={handleInputChange}
+                    className="w-full px-4 py-2 bg-zinc-800 border-2 border-yellow-400/30 rounded-lg focus:border-yellow-400 focus:outline-none text-white"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-yellow-400 mb-1">
+                    Profit
+                  </label>
+                  <input
+                    type="text"
+                    name="profit"
+                    value={formData.profit}
+                    onChange={handleInputChange}
+                    className="w-full px-4 py-2 bg-zinc-800 border-2 border-yellow-400/30 rounded-lg focus:border-yellow-400 focus:outline-none text-white"
+                  />
+                </div>
               </div>
             </div>
           </form>
