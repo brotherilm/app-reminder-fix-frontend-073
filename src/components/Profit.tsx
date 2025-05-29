@@ -38,29 +38,71 @@ const Profit: React.FC<ProfitProps> = ({ isOpen, onClose }) => {
     try {
       setLoading(true);
       setError(null);
-
-      // Get token from localStorage
-      const token =
-        localStorage.getItem("token") || localStorage.getItem("bearerToken");
-
-      const response = await axios.get<AnalysisData>(
-        "http://localhost:4000/api/get-analysis",
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-        }
-      );
-
-      setData(response.data);
-    } catch (err) {
-      if (axios.isAxiosError(err)) {
-        setError(
-          err.response?.data?.message || "Failed to fetch analysis data"
-        );
+      
+      // Check if token exists
+      const token = localStorage.getItem('token') || localStorage.getItem('bearerToken');
+      
+      if (!token) {
+        setError('Authentication token not found. Please login again.');
+        return;
       }
-      console.error("Error fetching analysis:", err);
+
+      // Dynamic API URL based on environment
+      const getApiUrl = () => {
+        // Check if we're in browser and on localhost
+        if (typeof window !== 'undefined') {
+          const hostname = window.location.hostname;
+          
+          // If accessing from localhost, use localhost backend
+          if (hostname === 'localhost' || hostname === '127.0.0.1') {
+            return 'http://localhost:4000';
+          }
+        }
+        
+        // For production/deployed version, use your deployed backend URL
+        // Replace this with your actual deployed backend URL
+        return process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
+      };
+
+      const apiUrl = getApiUrl();
+      
+      const response = await axios.get<AnalysisData>(`${apiUrl}/api/get-analysis`, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        timeout: 10000,
+        withCredentials: false
+      });
+      
+      setData(response.data);
+    } catch (err: any) {
+      let errorMessage = 'Failed to fetch analysis data';
+      
+      if (err.code === 'ERR_NETWORK') {
+        errorMessage = `Cannot connect to server. ${
+          typeof window !== 'undefined' && window.location.hostname !== 'localhost' 
+            ? 'Backend server needs to be deployed for production use.' 
+            : 'Please ensure the backend server is running on localhost:4000.'
+        }`;
+      } else if (err.response?.status === 401) {
+        errorMessage = 'Authentication failed. Please login again.';
+        localStorage.removeItem('token');
+        localStorage.removeItem('bearerToken');
+      } else if (err.response?.status === 403) {
+        errorMessage = 'Access forbidden. You do not have permission to access this resource.';
+      } else if (err.response?.status >= 500) {
+        errorMessage = 'Server error. Please try again later.';
+      } else if (err.response?.data?.message) {
+        errorMessage = err.response.data.message;
+      }
+      
+      setError(errorMessage);
+      console.error('Error fetching analysis:', err);
+      console.log('Current environment:', {
+        hostname: typeof window !== 'undefined' ? window.location.hostname : 'server',
+        apiUrl: typeof window !== 'undefined' ? (window.location.hostname === 'localhost' ? 'http://localhost:4000' : process.env.NEXT_PUBLIC_API_URL) : 'unknown'
+      });
     } finally {
       setLoading(false);
     }
@@ -108,84 +150,55 @@ const Profit: React.FC<ProfitProps> = ({ isOpen, onClose }) => {
             <div className="space-y-6">
               {/* Summary Section */}
               <div className="bg-zinc-800 rounded-lg p-4 border border-yellow-400/20">
-                <h3 className="text-lg font-semibold text-yellow-400 mb-4">
-                  Summary
-                </h3>
+                <h3 className="text-lg font-semibold text-yellow-400 mb-4">Summary</h3>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                   <div className="text-center">
                     <div className="text-sm text-gray-400">Total Modal</div>
-                    <div className="text-xl font-bold text-white">
-                      ${data.totalModal}
-                    </div>
+                    <div className="text-xl font-bold text-white">${data.totalModal}</div>
                   </div>
                   <div className="text-center">
                     <div className="text-sm text-gray-400">Total Profit</div>
-                    <div className="text-xl font-bold text-green-400">
-                      ${data.totalProfit}
-                    </div>
+                    <div className="text-xl font-bold text-green-400">${data.totalProfit}</div>
                   </div>
                   <div className="text-center">
                     <div className="text-sm text-gray-400">PNL</div>
-                    <div
-                      className={`text-xl font-bold ${
-                        data.PNL >= 0 ? "text-green-400" : "text-red-400"
-                      }`}
-                    >
+                    <div className={`text-xl font-bold ${data.PNL >= 0 ? 'text-green-400' : 'text-red-400'}`}>
                       ${data.PNL}
                     </div>
                   </div>
                   <div className="text-center">
                     <div className="text-sm text-gray-400">Count</div>
-                    <div className="text-xl font-bold text-white">
-                      {data.count}
-                    </div>
+                    <div className="text-xl font-bold text-white">{data.count}</div>
                   </div>
                 </div>
               </div>
 
               {/* Details Section */}
               <div className="space-y-4">
-                <h3 className="text-lg font-semibold text-yellow-400">
-                  Details
-                </h3>
-                <div className="space-y-3 max-h-96">
+                <h3 className="text-lg font-semibold text-yellow-400">Details</h3>
+                <div className="space-y-3 max-h-96 overflow-y-auto">
                   {data.details && data.details.length > 0 ? (
                     data.details.map((item, index) => (
-                      <div
-                        key={item.airdropId || index}
-                        className="bg-zinc-800 rounded-lg p-4 border border-yellow-400/20"
-                      >
+                      <div key={item.airdropId || index} className="bg-zinc-800 rounded-lg p-4 border border-yellow-400/20">
                         <div className="flex justify-between items-center mb-2">
                           <h4 className="text-lg font-medium text-yellow-400 capitalize">
                             {item.name}
                           </h4>
-                          <div
-                            className={`text-sm font-medium px-2 py-1 rounded ${
-                              item.PNL >= 0
-                                ? "bg-green-500/20 text-green-400"
-                                : "bg-red-500/20 text-red-400"
-                            }`}
-                          >
+                          <div className={`text-sm font-medium px-2 py-1 rounded ${
+                            item.PNL >= 0 ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'
+                          }`}>
                             PNL: ${item.PNL}
                           </div>
                         </div>
                         <div className="flex justify-between">
                           <div className="flex space-x-6">
                             <div>
-                              <span className="text-sm text-gray-400">
-                                Modal:{" "}
-                              </span>
-                              <span className="text-white font-medium">
-                                ${item.modal}
-                              </span>
+                              <span className="text-sm text-gray-400">Modal: </span>
+                              <span className="text-white font-medium">${item.modal}</span>
                             </div>
                             <div>
-                              <span className="text-sm text-gray-400">
-                                Profit:{" "}
-                              </span>
-                              <span className="text-green-400 font-medium">
-                                ${item.profit}
-                              </span>
+                              <span className="text-sm text-gray-400">Profit: </span>
+                              <span className="text-green-400 font-medium">${item.profit}</span>
                             </div>
                           </div>
                         </div>
@@ -203,7 +216,7 @@ const Profit: React.FC<ProfitProps> = ({ isOpen, onClose }) => {
             <div className="flex items-center justify-center h-64">
               <div className="text-center text-gray-400">
                 <div className="text-lg mb-2">No data available</div>
-                <button
+                <button 
                   onClick={fetchAnalysisData}
                   className="px-4 py-2 border border-yellow-400 text-yellow-400 rounded-lg hover:bg-yellow-400/10"
                 >
@@ -221,7 +234,7 @@ const Profit: React.FC<ProfitProps> = ({ isOpen, onClose }) => {
               onClick={handleClose}
               className="px-6 py-2 border-2 border-yellow-400 text-yellow-400 rounded-lg hover:bg-yellow-400/10"
             >
-              Close
+              Close            
             </button>
           </div>
         </div>
