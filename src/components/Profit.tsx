@@ -55,7 +55,11 @@ const Profit: React.FC<ProfitProps> = ({ isOpen, onClose }) => {
 
       setData(response.data);
     } catch (err) {
-      setError(err.response?.data?.message || "Failed to fetch analysis data");
+      if (axios.isAxiosError(err)) {
+        setError(
+          err.response?.data?.message || "Failed to fetch analysis data"
+        );
+      }
       console.error("Error fetching analysis:", err);
     } finally {
       setLoading(false);
