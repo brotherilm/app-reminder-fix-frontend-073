@@ -43,7 +43,7 @@ const Profit: React.FC<ProfitProps> = ({ isOpen, onClose }) => {
       const token =
         localStorage.getItem("token") || localStorage.getItem("bearerToken");
 
-      const response = await axios.get<AnalysisData>(
+      const response = await axios.post(
         `${process.env.NEXT_PUBLIC_API_URL}api/get-analysis`,
         {
           headers: {
