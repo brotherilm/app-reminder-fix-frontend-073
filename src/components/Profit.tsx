@@ -112,16 +112,16 @@ const Profit: React.FC<ProfitProps> = ({ isOpen, onClose }) => {
                   Summary
                 </h3>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                  <div className="text-center">
+                 <div className="text-center">
                     <div className="text-sm text-gray-400">Total Modal</div>
                     <div className="text-xl font-bold text-white">
-                      ${data.totalModal}
+                      ${data.totalModal?.toFixed(2)}
                     </div>
                   </div>
                   <div className="text-center">
                     <div className="text-sm text-gray-400">Total Profit</div>
                     <div className="text-xl font-bold text-green-400">
-                      ${data.totalProfit}
+                      ${data.totalProfit?.toFixed(2)}
                     </div>
                   </div>
                   <div className="text-center">
@@ -131,9 +131,10 @@ const Profit: React.FC<ProfitProps> = ({ isOpen, onClose }) => {
                         data.PNL >= 0 ? "text-green-400" : "text-red-400"
                       }`}
                     >
-                      ${data.PNL}
+                      ${data.PNL?.toFixed(2)}
                     </div>
                   </div>
+
                   <div className="text-center">
                     <div className="text-sm text-gray-400">Count</div>
                     <div className="text-xl font-bold text-white">
