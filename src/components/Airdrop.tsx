@@ -11,6 +11,7 @@ import GlobalTime from "./modals/GlobalTime";
 import Image from "next/image";
 import AccorditionDeleteConfirmationModal from "./modals/AccorditionDeleteConfirmationModal";
 import Profit from "./Profit";
+import Exchange from "./Exchange";
 
 // Interface for selected accordition
 interface SelectedAccordition {
@@ -75,7 +76,16 @@ const Airdrop: React.FC = () => {
   const [selectedDay, setSelectedDay] = useState(
     localStorage.getItem("selectedDay") || ""
   );
+  const [isExchangeOpen, setIsExchangeOpen] = useState(false);
   const [isProfitOpen, setIsProfitOpen] = useState(false);
+
+  const handleOpenExchange = () => {
+    setIsExchangeOpen(true);
+  };
+
+  const handleCloseExchange = () => {
+    setIsExchangeOpen(false);
+  };
 
   const handleOpenProfit = () => {
     setIsProfitOpen(true);
@@ -1006,6 +1016,17 @@ const Airdrop: React.FC = () => {
           </div>
           <div>
             <button
+              onClick={handleOpenExchange}
+              disabled={isDisabled}
+              className={`cursor-pointer bg-yellow-300 text-black p-4 rounded-xl mr-4 ${
+                isDisabled
+                  ? "opacity-50 cursor-not-allowed"
+                  : "hover:bg-yellow-400"
+              }`}
+            >
+              Send CEX
+            </button>
+            <button
               onClick={handleOpenProfit}
               disabled={isDisabled}
               className={`cursor-pointer bg-yellow-300 text-black p-4 rounded-xl mr-4 ${
@@ -1074,6 +1095,7 @@ const Airdrop: React.FC = () => {
           airdropId={selectedAirdropId}
           onUpdate={fetchAirdropData}
         />
+        <Exchange isOpen={isExchangeOpen} onClose={handleCloseExchange} />
         <Profit isOpen={isProfitOpen} onClose={handleCloseProfit} />
 
         <Form onAirdropCreated={handleAirdropCreated} />
